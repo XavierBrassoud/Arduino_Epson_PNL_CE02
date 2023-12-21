@@ -1,0 +1,22 @@
+{
+    "name": "EPSON PNL CE02",
+    "version": "0.0.0",
+    "description": "Library to repurposing the control panel of EPSON XP 520/530/540 printers from an Arduino.",
+    "keywords": "epson, printer, control, panel",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02.git"
+    },
+    "authors": [
+        {
+            "name": "Xavier BRASSOUD",
+            "email": "contact@xavierbrassoud.fr",
+            "url": "https://www.xavierbrassoud.fr/contact",
+            "maintainer": true
+        }
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02.git",
+    "frameworks": "*",
+    "platforms": "*"
+}
