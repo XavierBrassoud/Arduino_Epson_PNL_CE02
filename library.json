@@ -18,5 +18,16 @@
     "license": "MIT",
     "homepage": "https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02.git",
     "frameworks": "*",
-    "platforms": "*"
+    "platforms": "*",
+    "examples": [
+        {
+            "name": "CE02test",
+            "base": "examples/CE02test",
+            "files": [
+                "src/Epson_PNL_CE02.h",
+                "src/Epson_PNL_CE02.cpp",
+                "CE02test.cpp"
+            ]
+        }
+    ]
 }

@@ -7,10 +7,11 @@
 //            EPSON XP 520/530/540 control from Arduino.         //
 //**************************************************************//
 
+#include <Epson_PNL_CE02.h>
+
 #define BAUD_RATE 115200
 
 #include <Arduino.h>
-#include <control_panel.h>
 
 /* The FFC from the CPU to the control board has this pinout: */
 /* | Pin | Purpose                                   | */

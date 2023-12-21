@@ -1,6 +1,6 @@
 # Arduino - EPSON XP 520/530/540 Control Panel (PNL CE02)
 
-Library to repurposing the control panel of EPSON XP 520/530/540 printers from an Arduino.
+Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540 printers from an Arduino.
 
 ## Installation
 
