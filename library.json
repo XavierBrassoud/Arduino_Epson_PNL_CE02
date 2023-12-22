@@ -27,11 +27,11 @@
                 "src/Epson_PNL_CE02.h",
                 "src/Epson_PNL_CE02.cpp",
                 "OneButton.cpp"
-            ]
+            ],
+            "dependencies":
+            {
+                "mathertel/OneButton": "^2.5.0"
+            }
         }
-    ],
-    "dependencies":
-    {
-        "mathertel/OneButton": "^2.5.0"
-    }
+    ]
 }
