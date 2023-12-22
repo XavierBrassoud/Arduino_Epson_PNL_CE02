@@ -4,12 +4,8 @@
  * Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540
  * printers from an Arduino.
  *
- * Designed specifically to work with the EPSON PNL CE02 board
- * ----> EPSON XP 520
- * ----> EPSON XP 530
- * ----> EPSON XP 540
  *
- * These displays use LV165 shift register for buttons, I2C to communicate.
+ * These control board use LV165 shift register for buttons, I2C for display.
  *
  * The FFC from the CPU to the control board has this pinout:
  * | Pin | Purpose                                   |
@@ -70,6 +66,22 @@ const char *buttonName(ButtonFlag flag);
  */
 const bool isButtonPressed(uint8_t sequence, ButtonFlag flag);
 
+/**
+ * @brief Board class controller.
+ *
+ * @example
+ * ``` c++
+ * const cp = Epson_PNL_CE02(...);
+ * switch(cp.readButtons()) {
+ *  case Key.HOME:
+ *      Serial.println("Key HOME pressed.");
+ *      break;
+ *  case Key.HOME | Key.OK:
+ *      Serial.println("Key HOME and key OK pressed.");
+ *      break;
+ * }
+ * ```
+ */
 class Epson_PNL_CE02
 {
 
@@ -82,20 +94,6 @@ public:
      * @param clockPin
      * @param serInPin
      * @param shiftLoadPin
-     *
-     * @example
-     * ``` c++
-     * const cp = Epson_PNL_CE02(...);
-     * cp.read();
-     * switch(cp.readKeys()) {
-     *  case Key.HOME:
-     *      Serial.println("Key HOME pressed.");
-     *      break;
-     *  case Key.HOME | Key.OK:
-     *      Serial.println("Key HOME and key OK pressed.");
-     *      break;
-     * }
-     * ```
      */
     Epson_PNL_CE02(int oePin, int serOutPin, int clockPin, int serInPin, int shiftLoadPin);
 
