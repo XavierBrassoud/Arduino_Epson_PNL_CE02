@@ -22,12 +22,16 @@
     "examples": [
         {
             "name": "CE02test",
-            "base": "examples/CE02test",
+            "base": "examples/OneButton",
             "files": [
                 "src/Epson_PNL_CE02.h",
                 "src/Epson_PNL_CE02.cpp",
-                "CE02test.cpp"
+                "OneButton.cpp"
             ]
         }
-    ]
+    ],
+    "dependencies":
+    {
+        "mathertel/OneButton": "^2.5.0"
+    }
 }

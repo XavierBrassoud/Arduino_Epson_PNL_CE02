@@ -1,4 +1,4 @@
-/*!
+/**
  * @file Epson_PNL_CE02.h
  *
  * Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540
@@ -37,10 +37,10 @@
 #ifndef Epson_PNL_CE02_H
 #define Epson_PNL_CE02_H
 
-/*!
- * @brief Buttons byte mapping.
+/**
+ * @brief Buttons 8-bit mapping.
  */
-enum Key
+enum ButtonFlag
 {
     RIGHT = 0b00000001, // 0b11111110
     OK = 0b00000010,    // 0b11111101
@@ -52,49 +52,29 @@ enum Key
     HOME = 0b10000000,  // 0b01111111
 };
 
-const char *keyNames[8] = {
-    "Right",
-    "Ok",
-    "Up",
-    "Left",
-    "Start",
-    "Down",
-    "Stop",
-    "Home",
-};
-
-/*!
+/**
  * @brief Get button name.
  *
- * @param key Buttons byte.
+ * @param flag Buttons 8-bit sequence.
  * @return const char* button name.
  */
-const char *keyName(Key key);
+const char *buttonName(ButtonFlag flag);
 
-/*!
- * @brief Determines if a button is pressed in the sequence.
+/**
+ * @brief Determines if a button is pressed in the 8-bit sequence.
  *
- * @param keys buttons sequence.
- * @param key button pressed.
+ * @param sequence buttons 8-bit sequence.
+ * @param flag button pressed.
  * @return true
  * @return false
  */
-const bool isKeyPressed(uint8_t keys, Key key);
+const bool isButtonPressed(uint8_t sequence, ButtonFlag flag);
 
 class ControlPanel
 {
 
 public:
-    /*int serOutPin() const { return serOutPin; }
-    int clockPin() const { return clockPin; }
-    int shiftLoadPin() const { return shiftLoadPin; }
-
-    const unsigned long *keysTimers() { return keysTimers; }
-
-    unsigned long debounceDelay() const { return debounceDelay; }
-    unsigned long longPressDelay() const { return longPressDelay; }*/
-
-    /*!
+    /**
      * @brief Construct a new Control Panel object
      *
      * @param oePin
@@ -102,8 +82,6 @@ public:
      * @param clockPin
      * @param serInPin
      * @param shiftLoadPin
-     * @param debounceDelay
-     * @param longPressDelay
      *
      * @example
      * ``` c++
@@ -119,49 +97,18 @@ public:
      * }
      * ```
      */
-    ControlPanel(int oePin, int serOutPin, int clockPin, int serInPin, int shiftLoadPin, unsigned long debounceDelay = 50, unsigned long longPressDelay = 2000);
+    ControlPanel(int oePin, int serOutPin, int clockPin, int serInPin, int shiftLoadPin);
 
-    /*!
-     * @brief Read current pressed keys in binary format of 1 byte (0: no pressed, 1: pressed).
+    /**
+     * @brief Read current pressed buttons in binary format of 8 bits (0: no pressed, 1: pressed).
+     * Use ButtonFlag to determine witch button is pressed.
      *
-     * @return byte Keys currently pressed.
+     * @return byte Sequence of buttons currently pressed.
      */
-    uint8_t readKeys() { return pressedKeys; }
-
-    /*!
-     * @brief Read last pressed keys in binary format of 1 byte (0: no pressed, 1: pressed).
-     *
-     * @return byte Keys pressed.
-     */
-    uint8_t readPressedKeys() { return shortPressedKeys | longPressedKeys; }
-
-    /*!
-     * @brief Read short pressed keys in binary format of 1 byte (0: no pressed, 1: pressed).
-     *
-     * @return byte
-     */
-    uint8_t readShortPressedKeys() { return shortPressedKeys; }
-
-    /*!
-     * @brief Read long pressed keys in binary format of 1 byte (0: no pressed, 1: pressed).
-     *
-     * @return byte
-     */
-    uint8_t readLongPressedKeys() { return longPressedKeys; }
-
-    /*!
-     * @brief Read inputs loop.
-     *
-     */
-    void read();
+    uint8_t readButtons();
 
 private:
     unsigned int serOutPin, clockPin, shiftLoadPin;
-    unsigned long debounceDelay, longPressDelay, keysTimers[8];
-    uint8_t pressedKeys, longPressedKeys, shortPressedKeys = 0b00000000;
-
-    void keysDispatcher(uint8_t keys);
-
 };
 
 #endif //  Epson_PNL_CE02_H
