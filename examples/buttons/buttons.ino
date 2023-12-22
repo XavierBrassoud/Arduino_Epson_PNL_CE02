@@ -29,7 +29,6 @@
 
 #define BAUD_RATE 115200
 
-#include <Arduino.h>
 
 #include <Epson_PNL_CE02.h>
 

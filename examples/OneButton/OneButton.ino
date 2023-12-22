@@ -28,7 +28,6 @@
 
 #define BAUD_RATE 115200
 
-#include <Arduino.h>
 
 // install the OneButton library via Library Manager
 // if using the Arduino IDE, click here: http://librarymanager#OneButton
