@@ -45,3 +45,13 @@ switch (controlPanel.readButtons())
 ```
 
 See more usages in [`examples`](./examples/) folder.
+
+
+## Credits
+
+Thanks [@phooky](https://github.com/phooky) for your [inspiriting guide](https://www.nycresistor.com/2022/01/18/repurposing-control-panel/)!
+
+Examples uses:
+ * [@mathertel](https://github.com/mathertel)'s [OneButton](https://github.com/mathertel/OneButton) library (BSD license).
+
+EPSON for the control panel 😉

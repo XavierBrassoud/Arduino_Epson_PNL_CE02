@@ -1,34 +1,37 @@
-//**************************************************************//
-//  Name    : EPSON XP 520/530/540 Control Panel dialer.         //
-//  Author  : Xavier BRASSOUD                                    //
-//  Date    : 11 Dec, 2023                                       //
-//  Version : 1.0                                                //
-//  Notes   : Code for repurposing printer control panel of      //
-//            EPSON XP 520/530/540 control from Arduino.         //
-//**************************************************************//
-//
-//
-/* The FFC from the CPU to the control board has this pinout: */
-/* | Pin | Purpose                                   | */
-/* |-----|-------------------------------------------| */
-/* | 1   | 3-STATE Output Enable Input (OE)          | */
-/* | 2   | Serial Data Output (SER OUT)              | */
-/* | 3   | GND                                       | */
-/* | 4   | on/off btn                                | */
-/* | 5   | 3.3V supply                               | */
-/* | 6   | LCD UNKNOWN                               | */
-/* | 7   | LCD VIN UNKNOWN                           | */
-/* | 8   | GND                                       | */
-/* | 9   | Shift Register Clock Input (SCK)          | */
-/* | 10  | Serial Data Input (SER IN)                | */
-/* | 11  | Storage Register Clock Input (RCK)        | */
-/* | 12  | GND                                       | */
-/* | 13  | Unknown                                   | */
-/* | 14  | GND                                       | */
+/**
+ * @file OneButton.cpp
+ * @author Xavier BRASSOUD (contact@xavierbrassoud.fr)
+ * @brief Buttons playground using Epson_PNL_CE02 library with OneButton library.
+ * @version 1.0
+ * @date 2023-12-22
+ *
+ * @copyright MIT license
+ *
+ * The FFC from the CPU to the control board has this pinout:
+ * | Pin | Purpose                                   |
+ * |-----|-------------------------------------------|
+ * | 1   | 3-STATE Output Enable Input (OE)          |
+ * | 2   | Serial Data Output (SER OUT)              |
+ * | 3   | GND                                       |
+ * | 4   | on/off btn                                |
+ * | 5   | 3.3V supply                               |
+ * | 6   | LCD UNKNOWN                               |
+ * | 7   | LCD VIN UNKNOWN                           |
+ * | 8   | GND                                       |
+ * | 9   | Shift Register Clock Input (SCK)          |
+ * | 10  | Serial Data Input (SER IN)                |
+ * | 11  | Storage Register Clock Input (RCK)        |
+ * | 12  | GND                                       |
+ * | 13  | Unknown                                   |
+ * | 14  | GND                                       |
+ */
 
 #define BAUD_RATE 115200
 
 #include <Arduino.h>
+
+// install the OneButton library via Library Manager
+// if using the Arduino IDE, click here: http://librarymanager#OneButton
 #include <OneButton.h>
 
 #include <Epson_PNL_CE02.h>

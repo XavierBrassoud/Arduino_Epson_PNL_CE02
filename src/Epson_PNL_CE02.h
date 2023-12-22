@@ -1,10 +1,9 @@
 /**
  * @file Epson_PNL_CE02.h
- *
- * Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540
+ * @author Xavier BRASSOUD (contact@xavierbrassoud.fr)
+ * @brief Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540
  * printers from an Arduino.
- *
- *
+ * 
  * These control board use LV165 shift register for buttons, I2C for display.
  *
  * The FFC from the CPU to the control board has this pinout:
@@ -26,8 +25,10 @@
  * | 14  | GND                                       |
  *
  *
- * Written by Xavier BRASSOUD.
- * MIT license
+ * @version 0.0
+ * @date 2023-12-22
+ *
+ * @copyright MIT license
  */
 
 #ifndef Epson_PNL_CE02_H

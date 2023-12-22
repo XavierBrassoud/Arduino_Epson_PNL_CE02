@@ -1,8 +1,34 @@
-/*!
+/**
  * @file Epson_PNL_CE02.cpp
+ * @author Xavier BRASSOUD (contact@xavierbrassoud.fr)
+ * @brief Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540
+ * printers from an Arduino.
+ * 
+ * These control board use LV165 shift register for buttons, I2C for display.
  *
- * Written by Xavier BRASSOUD.
- * MIT license
+ * The FFC from the CPU to the control board has this pinout:
+ * | Pin | Purpose                                   |
+ * |-----|-------------------------------------------|
+ * | 1   | 3-STATE Output Enable Input (OE)          |
+ * | 2   | Serial Data Output (SER OUT)              |
+ * | 3   | GND                                       |
+ * | 4   | on/off btn                                |
+ * | 5   | 3.3V supply                               |
+ * | 6   | LCD UNKNOWN                               |
+ * | 7   | LCD VIN UNKNOWN                           |
+ * | 8   | GND                                       |
+ * | 9   | Shift Register Clock Input (SCK)          |
+ * | 10  | Serial Data Input (SER IN)                |
+ * | 11  | Storage Register Clock Input (RCK)        |
+ * | 12  | GND                                       |
+ * | 13  | Unknown                                   |
+ * | 14  | GND                                       |
+ *
+ *
+ * @version 0.0
+ * @date 2023-12-22
+ *
+ * @copyright MIT license
  */
 
 
