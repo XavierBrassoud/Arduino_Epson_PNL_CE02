@@ -1,7 +1,7 @@
 {
-    "name": "EPSON PNL CE02",
+    "name": "Epson_PNL_CE02",
     "version": "0.0.0",
-    "description": "Library to repurposing the control panel of EPSON XP 520/530/540 printers from an Arduino.",
+    "description": "Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540 printers from an Arduino.",
     "keywords": "epson, printer, control, panel",
     "repository": {
         "type": "git",
@@ -18,5 +18,20 @@
     "license": "MIT",
     "homepage": "https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02.git",
     "frameworks": "*",
-    "platforms": "*"
+    "platforms": "*",
+    "examples": [
+        {
+            "name": "CE02test",
+            "base": "examples/OneButton",
+            "files": [
+                "src/Epson_PNL_CE02.h",
+                "src/Epson_PNL_CE02.cpp",
+                "OneButton.cpp"
+            ],
+            "dependencies":
+            {
+                "mathertel/OneButton": "^2.5.0"
+            }
+        }
+    ]
 }
