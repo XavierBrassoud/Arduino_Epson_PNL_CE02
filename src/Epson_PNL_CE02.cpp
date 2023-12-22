@@ -32,37 +32,37 @@ const bool isButtonPressed(uint8_t sequence, ButtonFlag flag)
     return (sequence & flag) != 0; // Check if key pressed 0000{key}000, key>0 if set
 }
 
-ControlPanel::ControlPanel(int oePin, int serOutPin, int clockPin, int serInPin, int shiftLoadPin)
+Epson_PNL_CE02::Epson_PNL_CE02(int oePin, int serOutPin, int clockPin, int serInPin, int shiftLoadPin)
 {
-    ControlPanel::serOutPin = serOutPin;
-    ControlPanel::clockPin = clockPin;
-    ControlPanel::shiftLoadPin = shiftLoadPin;
+    Epson_PNL_CE02::serOutPin = serOutPin;
+    Epson_PNL_CE02::clockPin = clockPin;
+    Epson_PNL_CE02::shiftLoadPin = shiftLoadPin;
 
-    pinMode(ControlPanel::shiftLoadPin, OUTPUT);
-    pinMode(ControlPanel::clockPin, OUTPUT);
-    pinMode(ControlPanel::serOutPin, INPUT);
+    pinMode(Epson_PNL_CE02::shiftLoadPin, OUTPUT);
+    pinMode(Epson_PNL_CE02::clockPin, OUTPUT);
+    pinMode(Epson_PNL_CE02::serOutPin, INPUT);
 }
 
-byte ControlPanel::readButtons()
+byte Epson_PNL_CE02::readButtons()
 {
     int value;
     byte sequence = 0b00000000;
 
-    digitalWrite(ControlPanel::shiftLoadPin, LOW);  // enables parallel inputs
-    digitalWrite(ControlPanel::clockPin, LOW);      // start clock pin low
-    digitalWrite(ControlPanel::clockPin, HIGH);     // set clock pin high, data loaded into SR
-    digitalWrite(ControlPanel::shiftLoadPin, HIGH); // disable parallel inputs and enable serial output
+    digitalWrite(Epson_PNL_CE02::shiftLoadPin, LOW);  // enables parallel inputs
+    digitalWrite(Epson_PNL_CE02::clockPin, LOW);      // start clock pin low
+    digitalWrite(Epson_PNL_CE02::clockPin, HIGH);     // set clock pin high, data loaded into SR
+    digitalWrite(Epson_PNL_CE02::shiftLoadPin, HIGH); // disable parallel inputs and enable serial output
 
     for (int i = 0; i < 8; i++)
     {
-        value = !digitalRead(ControlPanel::serOutPin); // reads data from SR serial data out pin (invert cause output is HIGH)
+        value = !digitalRead(Epson_PNL_CE02::serOutPin); // reads data from SR serial data out pin (invert cause output is HIGH)
         if (value)
         {
             int a = (1 << i);    // shifts bit to its proper place in sequence
             sequence = sequence | a; // combines data from shifted bits to form a single 8-bit number
         }
-        digitalWrite(ControlPanel::clockPin, LOW);  // after each bit is logged
-        digitalWrite(ControlPanel::clockPin, HIGH); // pulses clock to get next bit
+        digitalWrite(Epson_PNL_CE02::clockPin, LOW);  // after each bit is logged
+        digitalWrite(Epson_PNL_CE02::clockPin, HIGH); // pulses clock to get next bit
     }
 
     return sequence;

@@ -31,9 +31,9 @@ The FFC from the CPU to the control board has this pinout:
 ## Let's play!
 
 ``` c++
-ControlPanel cp(...);
+Epson_PNL_CE02 controlPanel(...);
 ...
-switch (cp.readPressedKeys())
+switch (controlPanel.readButtons())
 {
     case OK:
         Serial.println("Key OK pressed !");

@@ -55,7 +55,7 @@ enum ButtonFlag
 /**
  * @brief Get button name.
  *
- * @param flag Buttons 8-bit sequence.
+ * @param flag 8-bit buttons sequence.
  * @return const char* button name.
  */
 const char *buttonName(ButtonFlag flag);
@@ -63,14 +63,14 @@ const char *buttonName(ButtonFlag flag);
 /**
  * @brief Determines if a button is pressed in the 8-bit sequence.
  *
- * @param sequence buttons 8-bit sequence.
+ * @param sequence 8-bit buttons sequence.
  * @param flag button pressed.
  * @return true
  * @return false
  */
 const bool isButtonPressed(uint8_t sequence, ButtonFlag flag);
 
-class ControlPanel
+class Epson_PNL_CE02
 {
 
 public:
@@ -85,7 +85,7 @@ public:
      *
      * @example
      * ``` c++
-     * const cp = ControlPanel(...);
+     * const cp = Epson_PNL_CE02(...);
      * cp.read();
      * switch(cp.readKeys()) {
      *  case Key.HOME:
@@ -97,7 +97,7 @@ public:
      * }
      * ```
      */
-    ControlPanel(int oePin, int serOutPin, int clockPin, int serInPin, int shiftLoadPin);
+    Epson_PNL_CE02(int oePin, int serOutPin, int clockPin, int serInPin, int shiftLoadPin);
 
     /**
      * @brief Read current pressed buttons in binary format of 8 bits (0: no pressed, 1: pressed).

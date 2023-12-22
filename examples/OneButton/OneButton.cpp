@@ -43,7 +43,7 @@ enum
   SP_RCK = 41,     // FFC 11
 };
 
-ControlPanel cp(-1, SP_SER_OUT, SP_CLK, -1, SP_RCK);
+Epson_PNL_CE02 controlPanel(-1, SP_SER_OUT, SP_CLK, -1, SP_RCK);
 
 // Single buttons events
 OneButton *rightButton;
@@ -98,7 +98,7 @@ void setup()
 
 void loop()
 {
-  byte buttonsSequence = cp.readButtons();
+  byte buttonsSequence = controlPanel.readButtons();
 
   rightButton->tick(isButtonPressed(buttonsSequence, RIGHT));
   okButton->tick(isButtonPressed(buttonsSequence, OK));
