@@ -13,21 +13,20 @@
  * | 1   | 3-STATE Output Enable Input (OE)          |
  * | 2   | Serial Data Output (SER OUT)              |
  * | 3   | GND                                       |
- * | 4   | on/off btn                                |
+ * | 4   | Power button                              |
  * | 5   | 3.3V supply                               |
- * | 6   | LCD UNKNOWN                               |
- * | 7   | LCD VIN UNKNOWN                           |
+ * | 6   | LCD reset                                 |
+ * | 7   | LCD backlight (+5V !)                     |
  * | 8   | GND                                       |
  * | 9   | Shift Register Clock Input (SCK)          |
  * | 10  | Serial Data Input (SER IN)                |
  * | 11  | Storage Register Clock Input (RCK)        |
  * | 12  | GND                                       |
- * | 13  | Unknown                                   |
+ * | 13  | LCD write                                 |
  * | 14  | GND                                       |
  */
 
 #define BAUD_RATE 115200
-
 
 // install the OneButton library via Library Manager
 // if using the Arduino IDE, click here: http://librarymanager#OneButton
@@ -37,15 +36,18 @@
 
 enum
 {
-  /* Serial Parallel Shifting Out (button communication) */
-  SP_OE = 31,      // FFC 1
-  SP_SER_OUT = 32, // FFC 2
-  SP_CLK = 39,     // FFC 9
-  SP_SER_IN = 40,  // FFC 10
-  SP_RCK = 41,     // FFC 11
+  /* Control panel to Arduino pinout */
+  SP_OE = 31,        // FFC 1
+  SP_SER_OUT = 32,   // FFC 2
+  POWER_BUTTON = 34, // FFC 4
+  LCD_RESET = 36,    // FFC 6
+  SP_CLK = 39,       // FFC 9
+  SP_SER_IN = 40,    // FFC 10
+  SP_RCK = 41,       // FFC 11
+  LCD_WRITE = 43,    // FFC 13
 };
 
-Epson_PNL_CE02 controlPanel(-1, SP_SER_OUT, SP_CLK, -1, SP_RCK);
+Epson_PNL_CE02 controlPanel(SP_OE, SP_SER_OUT, POWER_BUTTON, LCD_RESET, SP_CLK, SP_SER_IN, SP_RCK, LCD_WRITE);
 
 // Single buttons events
 OneButton *rightButton;
@@ -60,10 +62,21 @@ OneButton *homeButton;
 // Parallel buttons events
 OneButton *homeOkButton;
 
+// Power button has a dedicated pin
+OneButton powerButton(POWER_BUTTON);
+
 void printClick(void *button)
 {
   Serial.print("Click: ");
   Serial.println((char *)button);
+}
+
+void togglePowerLed()
+{
+  Serial.println("Click: power long - toggle power LED");
+
+  // toggle power led (switch on or off)
+  controlPanel.writePowerLed(!controlPanel.readPowerLed());
 }
 
 // function declarations
@@ -96,10 +109,16 @@ void setup()
 
   // Parallel buttons events
   homeOkButton->attachClick(printClick, (void *)"home + ok");
+
+  powerButton.attachClick(printClick, (void *)"power");
+  powerButton.attachLongPressStop(togglePowerLed);
 }
 
 void loop()
 {
+  // Get refreshed data
+  controlPanel.synchronize();
+
   byte buttonsSequence = controlPanel.readButtons();
 
   rightButton->tick(isButtonPressed(buttonsSequence, RIGHT));
@@ -113,6 +132,8 @@ void loop()
 
   // Custom isButtonPressed bits manipulation
   homeOkButton->tick(isButtonPressed(buttonsSequence, HOME) && isButtonPressed(buttonsSequence, OK));
+
+  powerButton.tick();
 
   delay(50);
 }

@@ -39,6 +39,11 @@
 #include <stdint.h>
 #include "Epson_PNL_CE02.h"
 
+// least significant bit order
+enum BitPosition {
+    POWER_LED = 1,
+};
+
 const char *buttonNames[8] = {
     "Right",
     "Ok",
@@ -61,7 +66,7 @@ const bool isButtonPressed(uint8_t sequence, ButtonFlag flag)
     return (sequence & flag) != 0; // Check if key pressed 0000{key}000, key>0 if set
 }
 
-Epson_PNL_CE02::Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin, int shiftLoadPin, int lcdWritePin)
+Epson_PNL_CE02::Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin, int latchPin, int lcdWritePin)
 {
     Epson_PNL_CE02::oePin = oePin;
     Epson_PNL_CE02::serOutPin = serOutPin;
@@ -69,24 +74,30 @@ Epson_PNL_CE02::Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int
     Epson_PNL_CE02::lcdResetPin = lcdResetPin;
     Epson_PNL_CE02::clockPin = clockPin;
     Epson_PNL_CE02::serInPin = serInPin;
-    Epson_PNL_CE02::shiftLoadPin = shiftLoadPin;
+    Epson_PNL_CE02::latchPin = latchPin;
     Epson_PNL_CE02::lcdWritePin = lcdWritePin;
 
     pinMode(Epson_PNL_CE02::powerButtonPin, INPUT);
 
-    pinMode(Epson_PNL_CE02::shiftLoadPin, OUTPUT);
+    pinMode(Epson_PNL_CE02::oePin, OUTPUT);
+    pinMode(Epson_PNL_CE02::latchPin, OUTPUT);
     pinMode(Epson_PNL_CE02::clockPin, OUTPUT);
+    pinMode(Epson_PNL_CE02::serInPin, OUTPUT);
     pinMode(Epson_PNL_CE02::serOutPin, INPUT);
 }
 
-void Epson_PNL_CE02::update()
+void Epson_PNL_CE02::synchronize()
 {
-    digitalWrite(shiftLoadPin, LOW);  // enables parallel inputs
-    digitalWrite(clockPin, LOW);      // start clock pin low
-    digitalWrite(clockPin, HIGH);     // set clock pin high, data loaded into SR
-    digitalWrite(shiftLoadPin, HIGH); // disable parallel inputs and enable serial output
+    digitalWrite(latchPin, LOW); // enables parallel inputs
 
+    // send buffer
+    shiftOut(serInPin, clockPin, LSBFIRST, buffer);
 
+    digitalWrite(clockPin, LOW);  // start clock pin low
+    digitalWrite(clockPin, HIGH); // set clock pin high, data loaded into SR
+    digitalWrite(latchPin, HIGH); // disable parallel inputs and enable serial output
+
+    // read buttons
     buttonsSequence = 0b11111111 ^ shiftIn(serOutPin, clockPin, LSBFIRST); // (invert cause output is HIGH)
 }
 
@@ -95,3 +106,12 @@ bool Epson_PNL_CE02::isPowerButtonPressed()
     return digitalRead(powerButtonPin) == HIGH;
 }
 
+uint8_t Epson_PNL_CE02::readPowerLed()
+{
+    return bitRead(buffer, POWER_LED);
+}
+
+void Epson_PNL_CE02::writePowerLed(uint8_t state)
+{
+    bitWrite(buffer, POWER_LED, state);
+}

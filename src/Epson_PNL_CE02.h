@@ -93,55 +93,64 @@ class Epson_PNL_CE02
 {
 
 public:
-
     /**
      * @brief Construct a new Epson_PNL_CE02 object
-     * 
-     * @param oePin 
-     * @param serOutPin 
-     * @param powerButtonPin 
-     * @param lcdResetPin 
-     * @param clockPin 
-     * @param serInPin 
-     * @param shiftLoadPin 
-     * @param lcdWritePin 
+     *
+     * @param oePin
+     * @param serOutPin
+     * @param powerButtonPin
+     * @param lcdResetPin
+     * @param clockPin
+     * @param serInPin
+     * @param latchPin
+     * @param lcdWritePin
      */
-    Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin, int shiftLoadPin, int lcdWritePin);
+    Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin, int latchPin, int lcdWritePin);
 
     /**
      * @brief Read and write to shift registers that control buttons, power led and display.
      * Called each time a refresh is needed.
-     * 
+     *
      */
-    void update();
+    void synchronize();
 
     /**
      * @brief Read current pressed buttons in binary format of 8 bits (0: no pressed, 1: pressed).
      * Use ButtonFlag to determine witch button is pressed.
-     * Depends on update().
+     * Depends on synchronize().
      *
      * @return byte Sequence of buttons currently pressed.
      */
-    uint8_t readButtons() { return buttonsSequence;};
+    uint8_t readButtons() { return buttonsSequence; };
 
     /**
      * @brief Determine if the power button is pressed or not. The power button has a dedicated pin.
-     * 
-     * @return true 
-     * @return false 
+     *
+     * @return true
+     * @return false
      */
     bool isPowerButtonPressed();
 
     /**
-     * @brief Control the state of the power led (HIGH: on, LOW: off).
-     * Depends on update().
+     * @brief Control the state of the power led (active LOW).
+     * Depends on synchronize().
+     * 
+     * @param state LOW: on / HIGH: off
      */
-    void writePowerLed(uint8_t state) { ledState = state; };
+    void writePowerLed(uint8_t state);
+
+    /**
+     * @brief Get the state of the power led (active LOW).
+     *
+     * @return uint8_t LOW: on
+     * @return uint8_t HIGH: off
+     */
+    uint8_t readPowerLed();
 
 private:
-    unsigned int oePin, serOutPin, powerButtonPin, lcdResetPin, clockPin, serInPin, shiftLoadPin, lcdWritePin;
+    unsigned int oePin, serOutPin, powerButtonPin, lcdResetPin, clockPin, serInPin, latchPin, lcdWritePin;
     uint8_t buttonsSequence;
-    uint8_t ledState;
+    uint8_t buffer;
 };
 
 #endif //  Epson_PNL_CE02_H

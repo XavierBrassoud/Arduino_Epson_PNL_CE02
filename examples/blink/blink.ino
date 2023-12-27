@@ -1,10 +1,9 @@
 /**
- * @file buttons.cpp
+ * @file blink.cpp
  * @author Xavier BRASSOUD (contact@xavierbrassoud.fr)
- * @brief A basic buttons playground using Epson_PNL_CE02 library.
- * Get an advanced usage of buttons in the OneButton sketch.
+ * @brief Blinks the power LED using the Epson_PNL_CE02 library.
  * @version 1.0
- * @date 2023-12-22
+ * @date 2023-12-27
  *
  * @copyright MIT license
  *
@@ -53,24 +52,19 @@ void setup()
 
 void loop()
 {
-    // Synchronize data
+    // turns ON power LED (active LOW)
+    controlPanel.writePowerLed(LOW);
+
+    // Synchronize state
+    controlPanel.synchronize();
+    
+    delay(500);
+
+    // turns OFF power LED
+    controlPanel.writePowerLed(HIGH);
+
+    // Synchronize state
     controlPanel.synchronize();
 
-    switch (controlPanel.readButtons())
-    {
-    case OK:
-        Serial.println("Button OK pressed !");
-        break;
-    case OK | HOME:
-        Serial.println("Button OK and button LEFT pressed !");
-        break;
-    }
-
-    // Power button has a dedicated pin
-    if (controlPanel.isPowerButtonPressed())
-    {
-        Serial.println("POWER button pressed !");
-    }
-
-    delay(50);
+    delay(500);
 }
