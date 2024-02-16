@@ -11,22 +11,25 @@
  *      * VHC164: 8 bits of parallel data (D0 - D7)
  *
  * The FFC from the CPU to the control board has this pinout:
- * | Pin | Purpose                                   |
- * |-----|-------------------------------------------|
- * | 1   | 3-STATE Output Enable Input (OE)          |
- * | 2   | Serial Data Output (SER OUT)              |
- * | 3   | GND                                       |
- * | 4   | Power button                              |
- * | 5   | 3.3V supply                               |
- * | 6   | LCD reset                                 |
- * | 7   | LCD backlight (+5V !)                     |
- * | 8   | GND                                       |
- * | 9   | Shift Register Clock Input (SCK)          |
- * | 10  | Serial Data Input (SER IN)                |
- * | 11  | Storage Register Clock Input (RCK)        |
- * | 12  | GND                                       |
- * | 13  | LCD write                                 |
- * | 14  | GND                                       |
+ * | Pin | Purpose                                   | MEGA 2560     |
+ * |-----|-------------------------------------------|---------------|
+ * | 1   | 3-STATE Output Enable Input (OE)          | 45            |
+ * | 2   | Serial Data Output (SER OUT)              | 50 (SPI MISO) |
+ * | 3   | GND                                       | GND           |
+ * | 4   | Power button                              | 46 🔺         |
+ * | 5   | 3.3V supply                               | 3.3V          |
+ * | 6   | LCD reset (+3.3V !)                       | 47 ⚡         |
+ * | 7   | LCD backlight (+5V !)                     | 5V            |
+ * | 8   | GND                                       | -             |
+ * | 9   | Shift Register Clock Input (SCK)          | 52 (SPI SCK)  |
+ * | 10  | Serial Data Input (SER IN)                | 51 (SPI MOSI) |
+ * | 11  | Storage Register Clock Input (RCK)        | 48            |
+ * | 12  | GND                                       | -             |
+ * | 13  | LCD write  (+3.3V !)                      | 49 ⚡         |
+ * | 14  | GND                                       | -             |
+ * 
+ * ⚡ Require a 3.3v level-shifter, screen makes shadows and may be destroyed after long use.
+ * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
  *
  *
  * @version 0.0
@@ -38,40 +41,66 @@
 #ifndef Epson_PNL_CE02_H
 #define Epson_PNL_CE02_H
 
-#include <stdint.h>
+#include <Arduino.h>
 
 /**
  * @brief Buttons 8-bit mapping.
  */
-enum ButtonFlag
+enum ButtonMask
 {
-    RIGHT = 0b00000001, // 0b11111110
-    OK = 0b00000010,    // 0b11111101
-    UP = 0b00000100,    // 0b11111011
-    LEFT = 0b00001000,  // 0b11110111
-    START = 0b00010000, // 0b11101111
-    DOWN = 0b00100000,  // 0b11011111
-    STOP = 0b01000000,  // 0b10111111
-    HOME = 0b10000000,  // 0b01111111
+    RIGHT = 0b10000000, // 0b11111110
+    OK = 0b01000000,    // 0b11111101
+    UP = 0b00100000,    // 0b11111011
+    LEFT = 0b00010000,  // 0b11110111
+    START = 0b00001000, // 0b11101111
+    DOWN = 0b00000100,  // 0b11011111
+    STOP = 0b00000010,  // 0b10111111
+    HOME = 0b00000001,  // 0b01111111
+};
+
+/**
+ * @brief Shift register pins (VHC595)
+ */
+enum ExtenderPin
+{
+    /**
+     * @brief Control the state of the power led (active LOW).
+     */
+    POWER_LED = 7,
+
+    /**
+     * @brief Control the state of the display backlight (active HIGH).
+     */
+    LCD_BACKLIGHT = 6,
+
+    /**
+     * @brief Control the state of the display CS pin (ChipSelect, active HIGH).
+     */
+    LCD_CS = 5,
+
+    /**
+     * @brief Control the state of the display D/C pin (Data / Command, active HIGH).
+     */
+    LCD_DC = 4
 };
 
 /**
  * @brief Get button name.
  *
- * @param flag 8-bit buttons sequence.
+ * @param mask 8-bit buttons sequence.
  * @return const char* button name.
  */
-const char *buttonName(ButtonFlag flag);
+const char *buttonName(ButtonMask mask);
 
 /**
  * @brief Determines if a button is pressed in the 8-bit sequence.
  *
  * @param sequence 8-bit buttons sequence.
- * @param flag button pressed.
+ * @param mask button pressed.
  * @return true
  * @return false
  */
-const bool isButtonPressed(uint8_t sequence, ButtonFlag flag);
+const bool isButtonPressed(byte sequence, ButtonMask mask);
 
 /**
  * @brief Board class controller.
@@ -96,61 +125,66 @@ public:
     /**
      * @brief Construct a new Epson_PNL_CE02 object
      *
-     * @param oePin
-     * @param serOutPin
-     * @param powerButtonPin
-     * @param lcdResetPin
-     * @param clockPin
-     * @param serInPin
-     * @param latchPin
-     * @param lcdWritePin
+     * @param oePin Extender output enable pin. Unused.
+     * @param serOutPin Serial output pin. Read value for buttons. (SPI MISO)
+     * @param powerButtonPin Dedicated pin for the power button.
+     * @param lcdResetPin Display reset pin.
+     * @param clockPin Shared clock pin for extender, buttons and display. (SPI SCK)
+     * @param serInPin Serial input pin. Write value in extender. (SPI MOSI)
+     * @param latchPin Write extender selector.
+     * @param lcdWritePin Display write pin.
      */
     Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin, int latchPin, int lcdWritePin);
 
     /**
-     * @brief Read and write to shift registers that control buttons, power led and display.
-     * Called each time a refresh is needed.
-     *
+     * @brief Set pins directions and initialize SPI bus.
      */
-    void synchronize();
+    void begin();
 
     /**
-     * @brief Read current pressed buttons in binary format of 8 bits (0: no pressed, 1: pressed).
-     * Use ButtonFlag to determine witch button is pressed.
-     * Depends on synchronize().
+     * @brief Send a HIGH or a LOW value to the control panel extender pin (refer to ExtenderPin).
      *
-     * @return byte Sequence of buttons currently pressed.
+     * @param pin shift register pin
+     * @param mode HIGH / LOW
      */
-    uint8_t readButtons() { return buttonsSequence; };
+    void extenderWrite(ExtenderPin pin, byte mode);
+
+    /**
+     * @brief Send parallel data (D0-D7) to the TFT display through the non latched 74HC164.
+     *
+     * @param data parallel data (D0-D7) byte
+     */
+    void displayWrite(byte data);
+
+    /**
+     * @brief Read current pressed buttons in 8-bit sequence (`0`: no pressed, `1`: pressed).
+     * Use ButtonMask to determine witch button is pressed.
+     *
+     * @return byte Current pressed buttons in 8-bit sequence
+     */
+    byte readButtons();
 
     /**
      * @brief Determine if the power button is pressed or not. The power button has a dedicated pin.
+     * Require a pull-up resistor (10K).
      *
      * @return true
      * @return false
      */
     bool isPowerButtonPressed();
 
-    /**
-     * @brief Control the state of the power led (active LOW).
-     * Depends on synchronize().
-     * 
-     * @param state LOW: on / HIGH: off
-     */
-    void writePowerLed(uint8_t state);
-
-    /**
-     * @brief Get the state of the power led (active LOW).
-     *
-     * @return uint8_t LOW: on
-     * @return uint8_t HIGH: off
-     */
-    uint8_t readPowerLed();
-
 private:
-    unsigned int oePin, serOutPin, powerButtonPin, lcdResetPin, clockPin, serInPin, latchPin, lcdWritePin;
-    uint8_t buttonsSequence;
-    uint8_t buffer;
+    unsigned int oePin, serOutPin, powerButtonPin, clockPin, serInPin, latchPin;
+    byte buttonsSequence; // SERIAL OUT 74LV165A - All buttons except power
+    byte buffer;          // SERIAL IN 74HC595 - Control panel extender (refer to ExtenderPin)
+
+    /**
+     * @brief Read and write to shift registers that control buttons, power led and display.
+     * Called each time a refresh is needed.
+     *
+     * @return byte Current pressed buttons in 8-bit sequence
+     */
+    byte synchronize();
 };
 
 #endif //  Epson_PNL_CE02_H
