@@ -6,7 +6,6 @@
  * parallel interface.
  * This sketch running only on Arduino MEGA 2560.
  * @version 1.0
- * @date 2023-12-28
  *
  * @copyright MIT license
  * 

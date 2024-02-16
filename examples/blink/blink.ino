@@ -3,7 +3,6 @@
  * @author Xavier BRASSOUD (contact@xavierbrassoud.fr)
  * @brief Blinks the power LED using the Epson_PNL_CE02 library.
  * @version 1.0
- * @date 2023-12-27
  *
  * @copyright MIT license
  *

@@ -4,7 +4,6 @@
  * @brief A basic buttons playground using Epson_PNL_CE02 library.
  * Get an advanced usage of buttons in the OneButton sketch.
  * @version 1.0
- * @date 2023-12-22
  *
  * @copyright MIT license
  *

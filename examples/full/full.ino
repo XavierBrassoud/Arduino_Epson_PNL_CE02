@@ -4,7 +4,6 @@
  * @brief Full playground using Epson_PNL_CE02 library with OneButton library
  * and MCUFRIEND_kbv. See "display" example to wire the display correctly.
  * @version 1.0
- * @date 2023-12-22
  *
  * @copyright MIT license
  *
