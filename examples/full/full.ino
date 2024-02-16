@@ -86,7 +86,7 @@ OneButton *homeButton;
 OneButton *homeOkButton;
 
 // Power button has a dedicated pin
-OneButton powerButton(POWER_BUTTON,);
+OneButton powerButton(POWER_BUTTON);
 
 void printClick(void *button)
 {
