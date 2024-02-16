@@ -9,11 +9,6 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        path:
-          - 'src'
-          - 'examples'
     steps:
       - uses: actions/checkout@v4
 
