@@ -1,0 +1,24 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+ButtonMask	KEYWORD1
+ExtenderPin	KEYWORD1
+Epson_PNL_CE02	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+readButtons	KEYWORD2
+buttonName	KEYWORD2
+extenderWrite	KEYWORD2
+displayWrite	KEYWORD2
+isButtonPressed	KEYWORD2
+isPowerButtonPressed	KEYWORD2
+
+######################################
+# Constants (LITERAL1)
+#######################################

@@ -11,22 +11,25 @@
  *      * VHC164: 8 bits of parallel data (D0 - D7)
  *
  * The FFC from the CPU to the control board has this pinout:
- * | Pin | Purpose                                   |
- * |-----|-------------------------------------------|
- * | 1   | 3-STATE Output Enable Input (OE)          |
- * | 2   | Serial Data Output (SER OUT)              |
- * | 3   | GND                                       |
- * | 4   | Power button                              |
- * | 5   | 3.3V supply                               |
- * | 6   | LCD reset                                 |
- * | 7   | LCD backlight (+5V !)                     |
- * | 8   | GND                                       |
- * | 9   | Shift Register Clock Input (SCK)          |
- * | 10  | Serial Data Input (SER IN)                |
- * | 11  | Storage Register Clock Input (RCK)        |
- * | 12  | GND                                       |
- * | 13  | LCD write                                 |
- * | 14  | GND                                       |
+ * | Pin | Purpose                                   | MEGA 2560     |
+ * |-----|-------------------------------------------|---------------|
+ * | 1   | 3-STATE Output Enable Input (OE)          | 45            |
+ * | 2   | Serial Data Output (SER OUT)              | 50 (SPI MISO) |
+ * | 3   | GND                                       | GND           |
+ * | 4   | Power button                              | 46 🔺         |
+ * | 5   | 3.3V supply                               | 3.3V          |
+ * | 6   | LCD reset (+3.3V !)                       | 47 ⚡         |
+ * | 7   | LCD backlight (+5V !)                     | 5V            |
+ * | 8   | GND                                       | -             |
+ * | 9   | Shift Register Clock Input (SCK)          | 52 (SPI SCK)  |
+ * | 10  | Serial Data Input (SER IN)                | 51 (SPI MOSI) |
+ * | 11  | Storage Register Clock Input (RCK)        | 48            |
+ * | 12  | GND                                       | -             |
+ * | 13  | LCD write  (+3.3V !)                      | 49 ⚡         |
+ * | 14  | GND                                       | -             |
+ * 
+ * ⚡ Require a 3.3v level-shifter, screen makes shadows and may be destroyed after long use.
+ * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
  *
  *
  * @version 0.0
@@ -36,13 +39,9 @@
  */
 
 #include <Arduino.h>
+#include <SPI.h>
 #include <stdint.h>
 #include "Epson_PNL_CE02.h"
-
-// least significant bit order
-enum BitPosition {
-    POWER_LED = 1,
-};
 
 const char *buttonNames[8] = {
     "Right",
@@ -55,63 +54,76 @@ const char *buttonNames[8] = {
     "Home",
 };
 
-const char *buttonName(ButtonFlag flag)
+// UTILS
+const char *buttonName(ButtonMask flag)
 {
     const double bitPos = log(flag) / log(2);
     return buttonNames[(int)bitPos];
 }
 
-const bool isButtonPressed(uint8_t sequence, ButtonFlag flag)
+const bool isButtonPressed(byte sequence, ButtonMask flag)
 {
     return (sequence & flag) != 0; // Check if key pressed 0000{key}000, key>0 if set
 }
 
+// CTOR
 Epson_PNL_CE02::Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin, int latchPin, int lcdWritePin)
 {
     Epson_PNL_CE02::oePin = oePin;
     Epson_PNL_CE02::serOutPin = serOutPin;
     Epson_PNL_CE02::powerButtonPin = powerButtonPin;
-    Epson_PNL_CE02::lcdResetPin = lcdResetPin;
     Epson_PNL_CE02::clockPin = clockPin;
     Epson_PNL_CE02::serInPin = serInPin;
     Epson_PNL_CE02::latchPin = latchPin;
-    Epson_PNL_CE02::lcdWritePin = lcdWritePin;
-
-    pinMode(Epson_PNL_CE02::powerButtonPin, INPUT);
-
-    pinMode(Epson_PNL_CE02::oePin, OUTPUT);
-    pinMode(Epson_PNL_CE02::latchPin, OUTPUT);
-    pinMode(Epson_PNL_CE02::clockPin, OUTPUT);
-    pinMode(Epson_PNL_CE02::serInPin, OUTPUT);
-    pinMode(Epson_PNL_CE02::serOutPin, INPUT);
 }
 
-void Epson_PNL_CE02::synchronize()
+// PUBLICS
+void Epson_PNL_CE02::begin()
 {
-    digitalWrite(latchPin, LOW); // enables parallel inputs
+    pinMode(powerButtonPin, INPUT);
 
-    // send buffer
-    shiftOut(serInPin, clockPin, LSBFIRST, buffer);
+    pinMode(oePin, OUTPUT);
+    pinMode(latchPin, OUTPUT);
+    pinMode(clockPin, OUTPUT);
+    pinMode(serInPin, OUTPUT);
+    pinMode(serOutPin, INPUT);
 
-    digitalWrite(clockPin, LOW);  // start clock pin low
-    digitalWrite(clockPin, HIGH); // set clock pin high, data loaded into SR
-    digitalWrite(latchPin, HIGH); // disable parallel inputs and enable serial output
+    SPI.begin();
+    SPI.beginTransaction(SPISettings(F_CPU / 2, MSBFIRST, SPI_MODE0)); // Max SPI speed
 
-    // read buttons
-    buttonsSequence = 0b11111111 ^ shiftIn(serOutPin, clockPin, LSBFIRST); // (invert cause output is HIGH)
+    digitalWrite(oePin, LOW);
+}
+
+void Epson_PNL_CE02::extenderWrite(ExtenderPin pin, byte mode)
+{
+    bitWrite(buffer, pin, mode);
+    synchronize();
+}
+
+void Epson_PNL_CE02::displayWrite(byte data)
+{
+    SPI.transfer(data);
+}
+
+byte Epson_PNL_CE02::readButtons()
+{
+    return synchronize();
 }
 
 bool Epson_PNL_CE02::isPowerButtonPressed()
 {
-    return digitalRead(powerButtonPin) == HIGH;
+    return digitalRead(powerButtonPin) == LOW;
 }
 
-uint8_t Epson_PNL_CE02::readPowerLed()
-{
-    return bitRead(buffer, POWER_LED);
-}
+// PRIVATES
 
-void Epson_PNL_CE02::writePowerLed(uint8_t state)
+byte Epson_PNL_CE02::synchronize()
 {
-    bitWrite(buffer, POWER_LED, state);
+    // STEP 1: Send control information (Power LED, LCD backlight, LCD CS, LCD D/C) through 74HC595
+    digitalWrite(latchPin, LOW); // enables parallel inputs
+    SPI.transfer(buffer);
+    // STEP 2: Receive buttons inputs through 74LV165A
+    digitalWrite(latchPin, HIGH); // disable parallel inputs and enable serial output
+
+    return 0b11111111 ^ SPI.transfer(0xff); // read buttons (invert cause output is HIGH)
 }
