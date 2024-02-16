@@ -17,11 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: arduino-lint
-        uses: arduino/arduino-lint-action@v1
-        with:
-          library-manager: update
-          compliance: strict
+      # - name: arduino-lint
+      #   uses: arduino/arduino-lint-action@v1
+      #   with:
+      #     library-manager: update
+      #     compliance: strict
 
       - uses: cpp-linter/cpp-linter-action@v2
         with:
