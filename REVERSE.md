@@ -33,6 +33,7 @@ Right, we have 8/20 pins identified... After long hours searching around the web
 
 After stealing my grandpa's glasses, I was able to map each pins of the screen:
 ![docs/display_pinout.png](docs/display_pinout.png)
+
 *3, 4, 5 are stabilization pins wired to capacitors*
 
 Now let's try the screen! I've plugged the screen directly to a 20 FPC adapter, executing this tiny program into the Arduino:
@@ -56,6 +57,7 @@ Launching the `graphictest_kbv` sketch from [MCUFRIEND_kbv](https://github.com/p
 ## Let's wired up together
 
 Once the screen pinout was found, the rest of the reverse engineering process was a piece of cake. Here is the final control panel pinout:
+
 ![docs/main_pinout.png](docs/main_pinout.png)
 
 I've stuck a little bit on refresh screen which was terribly slow. After some investigations, the Arduino builtin `shiftOut()` seems to be the culprit. Convert this to `SPI.transfer()` was the way to go. Another note is the display is wired in write-only mode on control panel board, just force the display to `0x9163` with MCUFRIEND_kbv library correctly adapted:
