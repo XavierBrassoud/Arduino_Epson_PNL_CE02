@@ -33,11 +33,11 @@ Happy hacking!
 
 ## Installation
 
-From Arduino:
+ * **Arduino IDE**: Search for "***Epson_PNL_CE02***" in the built-in Arduino IDE Library manager ([details](https://www.arduino.cc/en/guide/libraries))
 
-From PlatformIO:
+ * **PlatformIO**: Add `XavierBassoud/Epson_PNL_CE02` in the `lib_deps` section of your **platformio.ini** file ([details](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#cmd-pkg-install))
 
-Direct download from source (ZIP bundle):
+ * Direct download from source: Clone this repository into Arduino/Libraries
 
 ## Hardware requirements
 
