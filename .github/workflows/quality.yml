@@ -20,7 +20,7 @@ jobs:
 
       - uses: cpp-linter/cpp-linter-action@v2
         with:
-          style: llvm
+          style: file
           files-changed-only: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
