@@ -3,12 +3,12 @@
  * @author Xavier BRASSOUD (contact@xavierbrassoud.fr)
  * @brief Based on MCUFRIEND_kbv special "USE_MEGA_8BIT_PORTC_SHIELD".
  * Copy-paste this new special inside MCUFRIEND_kbv/utility/mcufriend_special.h
- * 
+ *
  * Need explicit instantiation of Epson_PNL_CE02 as it's used here as extern member:
  * Epson_PNL_CE02 controlPanel(...);
- * 
+ *
  * See examples/display, or examples/full for complete usage.
- * 
+ *
  * This special is adapted for a MEGA2560 with the following pin mapping:
  * | Pin | Purpose                                   | MEGA 2560     |
  * |-----|-------------------------------------------|---------------|
@@ -26,15 +26,15 @@
  * | 12  | GND                                       | -             |
  * | 13  | LCD write  (+3.3V !)                      | 49 ⚡         |
  * | 14  | GND                                       | -             |
- * 
+ *
  * ⚡ Require a 3.3v level-shifter, screen makes shadows and may be destroyed after long use.
  * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
- * 
+ *
  * @version 0.1
  * @date 2024-02-13
- * 
+ *
  * @copyright MIT license
- * 
+ *
  */
 
 // Paste to the top of mcufriend_special.h
@@ -68,47 +68,73 @@ extern Epson_PNL_CE02 controlPanel;
 #define RD_PORT UNUSED_PORT
 #define RD_PIN -1
 
-#define write_8(x)                \
-  ({                              \
-    controlPanel.displayWrite(x); \
-  })
+#define write_8(x) ({ controlPanel.displayWrite(x); })
 
-#define read_8()      ( PINC )
-#define setWriteDir() { DDRC = 0xFF; }
-#define setReadDir()  { DDRC = 0x00; }
-#define write8(x)     { write_8(x); WR_ACTIVE; WR_STROBE; }
-#define write16(x)    { uint8_t h = (x)>>8, l = x; write8(h); write8(l); }
-#define READ_8(dst)   { RD_STROBE; dst = read_8(); RD_IDLE; }
-#define READ_16(dst)  { RD_STROBE; dst = read_8(); RD_IDLE; RD_STROBE; dst = (dst<<8) | read_8(); RD_IDLE; }
+#define read_8() (PINC)
+#define setWriteDir()                                                                                                  \
+    {                                                                                                                  \
+        DDRC = 0xFF;                                                                                                   \
+    }
+#define setReadDir()                                                                                                   \
+    {                                                                                                                  \
+        DDRC = 0x00;                                                                                                   \
+    }
+#define write8(x)                                                                                                      \
+    {                                                                                                                  \
+        write_8(x);                                                                                                    \
+        WR_ACTIVE;                                                                                                     \
+        WR_STROBE;                                                                                                     \
+    }
+#define write16(x)                                                                                                     \
+    {                                                                                                                  \
+        uint8_t h = (x) >> 8, l = x;                                                                                   \
+        write8(h);                                                                                                     \
+        write8(l);                                                                                                     \
+    }
+#define READ_8(dst)                                                                                                    \
+    {                                                                                                                  \
+        RD_STROBE;                                                                                                     \
+        dst = read_8();                                                                                                \
+        RD_IDLE;                                                                                                       \
+    }
+#define READ_16(dst)                                                                                                   \
+    {                                                                                                                  \
+        RD_STROBE;                                                                                                     \
+        dst = read_8();                                                                                                \
+        RD_IDLE;                                                                                                       \
+        RD_STROBE;                                                                                                     \
+        dst = (dst << 8) | read_8();                                                                                   \
+        RD_IDLE;                                                                                                       \
+    }
 
-#define PIN_LOW(p, b)                                  \
-  ({                                                   \
-    if (&p != &VIRTUAL_PORT)                           \
-    {                                                  \
-      (p) &= ~(1 << (b));                              \
-    }                                                  \
-    else                                               \
-    {                                                  \
-      controlPanel.extenderWrite((ExtenderPin)b, LOW); \
-    }                                                  \
-  })
+#define PIN_LOW(p, b)                                                                                                  \
+    ({                                                                                                                 \
+        if (&p != &VIRTUAL_PORT)                                                                                       \
+        {                                                                                                              \
+            (p) &= ~(1 << (b));                                                                                        \
+        }                                                                                                              \
+        else                                                                                                           \
+        {                                                                                                              \
+            controlPanel.extenderWrite((ExtenderPin)b, LOW);                                                           \
+        }                                                                                                              \
+    })
 
-#define PIN_HIGH(p, b)                                  \
-  ({                                                    \
-    if (&p != &VIRTUAL_PORT)                            \
-    {                                                   \
-      (p) |= (1 << (b));                                \
-    }                                                   \
-    else                                                \
-    {                                                   \
-      controlPanel.extenderWrite((ExtenderPin)b, HIGH); \
-    }                                                   \
-  })
+#define PIN_HIGH(p, b)                                                                                                 \
+    ({                                                                                                                 \
+        if (&p != &VIRTUAL_PORT)                                                                                       \
+        {                                                                                                              \
+            (p) |= (1 << (b));                                                                                         \
+        }                                                                                                              \
+        else                                                                                                           \
+        {                                                                                                              \
+            controlPanel.extenderWrite((ExtenderPin)b, HIGH);                                                          \
+        }                                                                                                              \
+    })
 
-#define PIN_OUTPUT(p, b)       \
-  ({                           \
-    if (&p != &VIRTUAL_PORT)   \
-    {                          \
-      *(&p - 1) |= (1 << (b)); \
-    }                          \
-  })
+#define PIN_OUTPUT(p, b)                                                                                               \
+    ({                                                                                                                 \
+        if (&p != &VIRTUAL_PORT)                                                                                       \
+        {                                                                                                              \
+            *(&p - 1) |= (1 << (b));                                                                                   \
+        }                                                                                                              \
+    })

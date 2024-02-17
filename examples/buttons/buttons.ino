@@ -23,15 +23,15 @@
  * | 12  | GND                                       | -             |
  * | 13  | LCD write  (+3.3V !)                      | 49 ⚡         |
  * | 14  | GND                                       | -             |
- * 
+ *
  * ⚡ Require a 3.3v level-shifter, screen makes shadows and may be destroyed after long use.
  * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
  */
 
 #if defined(ARDUINO_ARCH_AVR)
-    #define BAUD_RATE 115200
+#define BAUD_RATE 115200
 #else
-    #define BAUD_RATE 9600
+#define BAUD_RATE 9600
 #endif
 
 #include <Epson_PNL_CE02.h>

@@ -27,7 +27,7 @@
  * | 12  | GND                                       | -             |
  * | 13  | LCD write  (+3.3V !)                      | 49 ⚡         |
  * | 14  | GND                                       | -             |
- * 
+ *
  * ⚡ Require a 3.3v level-shifter, screen makes shadows and may be destroyed after long use.
  * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
  *
@@ -37,20 +37,13 @@
  * @copyright MIT license
  */
 
+#include "Epson_PNL_CE02.h"
 #include <Arduino.h>
 #include <SPI.h>
 #include <stdint.h>
-#include "Epson_PNL_CE02.h"
 
 const char *buttonNames[8] = {
-    "Right",
-    "Ok",
-    "Up",
-    "Left",
-    "Start",
-    "Down",
-    "Stop",
-    "Home",
+    "Right", "Ok", "Up", "Left", "Start", "Down", "Stop", "Home",
 };
 
 // UTILS
@@ -66,7 +59,8 @@ const bool isButtonPressed(byte sequence, ButtonMask flag)
 }
 
 // CTOR
-Epson_PNL_CE02::Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin, int latchPin, int lcdWritePin)
+Epson_PNL_CE02::Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin,
+                               int serInPin, int latchPin, int lcdWritePin)
 {
     Epson_PNL_CE02::oePin = oePin;
     Epson_PNL_CE02::serOutPin = serOutPin;

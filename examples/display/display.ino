@@ -8,7 +8,7 @@
  * @version 1.0
  *
  * @copyright MIT license
- * 
+ *
  * | Pin | Purpose                                   | MEGA 2560     |
  * |-----|-------------------------------------------|---------------|
  * | 1   | 3-STATE Output Enable Input (OE)          | 45            |
@@ -25,11 +25,11 @@
  * | 12  | GND                                       | -             |
  * | 13  | LCD write  (+3.3V !)                      | 49 ⚡         |
  * | 14  | GND                                       | -             |
- * 
+ *
  * ⚡ Require a 3.3v level-shifter, screen makes shadows and may be destroyed after long use.
  * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
  *
- * 
+ *
  * Adaptation:
  * 1. Download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
  * 2. Edit *MCUFRIEND_kbv/utility/mcufriend_shield.h*:
@@ -48,7 +48,7 @@
  *       ``` c++
  *       controlPanel.extenderWrite(LCD_BACKLIGHT, HIGH);
  *       tft.begin(0x9163);
- * 
+ *
  */
 
 #include <Epson_PNL_CE02.h>

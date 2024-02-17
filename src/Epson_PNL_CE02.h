@@ -27,7 +27,7 @@
  * | 12  | GND                                       | -             |
  * | 13  | LCD write  (+3.3V !)                      | 49 ⚡         |
  * | 14  | GND                                       | -             |
- * 
+ *
  * ⚡ Require a 3.3v level-shifter, screen makes shadows and may be destroyed after long use.
  * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
  *
@@ -73,12 +73,12 @@ enum ExtenderPin
     LCD_BACKLIGHT = 6,
 
     /**
-     * @brief Control the state of the display CS pin (ChipSelect, active HIGH).
+     * @brief Control the state of the display ChipSelect pin (active HIGH).
      */
     LCD_CS = 5,
 
     /**
-     * @brief Control the state of the display D/C pin (Data / Command, active HIGH).
+     * @brief Control the state of the display Data/Command pin (active HIGH).
      */
     LCD_DC = 4
 };
@@ -120,7 +120,7 @@ const bool isButtonPressed(byte sequence, ButtonMask mask);
 class Epson_PNL_CE02
 {
 
-public:
+  public:
     /**
      * @brief Construct a new Epson_PNL_CE02 object
      *
@@ -133,7 +133,8 @@ public:
      * @param latchPin Write extender selector.
      * @param lcdWritePin Display write pin.
      */
-    Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin, int latchPin, int lcdWritePin);
+    Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin,
+                   int latchPin, int lcdWritePin);
 
     /**
      * @brief Set pins directions and initialize SPI bus.
@@ -172,9 +173,8 @@ public:
      */
     bool isPowerButtonPressed();
 
-private:
+  private:
     unsigned int oePin, serOutPin, powerButtonPin, clockPin, serInPin, latchPin;
-    byte buttonsSequence; // SERIAL OUT 74LV165A - All buttons except power
     byte buffer;          // SERIAL IN 74HC595 - Control panel extender (refer to ExtenderPin)
 
     /**
