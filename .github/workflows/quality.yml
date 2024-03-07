@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch: # Allows to trigger the workflow manually in GitHub UI
 
+permissions:
+  pull-requests: write
+
 jobs:
   lint:
     runs-on: ubuntu-latest
