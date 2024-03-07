@@ -6,15 +6,18 @@ on:
   pull_request:
   workflow_dispatch: # Allows to trigger the workflow manually in GitHub UI
 
-permissions:
-  pull-requests: write
-
 jobs:
-  lint:
+  clone:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+  lint:
+    needs: clone
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
       # - name: arduino-lint
       #   uses: arduino/arduino-lint-action@v1
       #   with:
