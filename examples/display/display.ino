@@ -54,20 +54,19 @@
 #include <Epson_PNL_CE02.h>
 
 /****************************** Epson_PNL_CE02 *******************************/
-enum
-{
+Epson_PNL_CE02_Pinout pinout = {
     /* Control panel to Arduino pinout */
-    EXTENDER_OE = 45,  // FFC 1
-    SERIAL_OUT = 50,   // SPI MISO / FFC 2
-    POWER_BUTTON = 46, // FFC 4
-    LCD_RESET = 47,    // FFC 6
-    CLOCK = 52,        // SPI SCK / FFC 9
-    SERIAL_IN = 51,    // SPI MOSI / FFC 10
-    LATCH = 48,        // FFC 11
-    LCD_WRITE = 49,    // FFC 13
+    .EXTENDER_OE = 45,  // FFC 1
+    .SERIAL_OUT = 50,   // SPI MISO / FFC 2
+    .POWER_BUTTON = 46, // FFC 4
+    .LCD_RESET = 47,    // FFC 6
+    .CLOCK = 52,        // SPI SCK / FFC 9
+    .SERIAL_IN = 51,    // SPI MOSI / FFC 10
+    .LATCH = 48,        // FFC 11
+    .LCD_WRITE = 49,    // FFC 13
 };
 
-Epson_PNL_CE02 controlPanel(EXTENDER_OE, SERIAL_OUT, POWER_BUTTON, LCD_RESET, CLOCK, SERIAL_IN, LATCH, LCD_WRITE);
+Epson_PNL_CE02 controlPanel(&pinout);
 
 /******************************* MCUFRIEND_kbv *******************************/
 
@@ -88,7 +87,7 @@ void setup()
     controlPanel.begin();
 
     // STEP 1: Turn display ON
-    controlPanel.extenderWrite(LCD_BACKLIGHT, HIGH);
+    controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, HIGH);
 
     // STEP 2: INIT display
     tft.begin(0x9163); // Force ILI9163C as the control panel wired the display in write-only mode

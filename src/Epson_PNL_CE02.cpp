@@ -1,5 +1,5 @@
 /**
- * @file Epson_PNL_CE02.h
+ * @file Epson_PNL_CE02.cpp
  * @author Xavier BRASSOUD (contact@xavierbrassoud.fr)
  * @brief Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540
  * printers from an Arduino.
@@ -40,62 +40,70 @@
 #include "Epson_PNL_CE02.h"
 #include <Arduino.h>
 #include <SPI.h>
-#include <stdint.h>
-
-const char *buttonNames[8] = {
-    "Right", "Ok", "Up", "Left", "Start", "Down", "Stop", "Home",
-};
 
 // UTILS
-const char *buttonName(ButtonMask flag)
+// cppcheck-suppress unusedFunction
+const char *buttonName(ButtonMask mask)
 {
-    const double bitPos = log(flag) / log(2);
-    return buttonNames[(int)bitPos];
+    switch (mask)
+    {
+    case ButtonMask::RIGHT:
+        return "Right";
+    case ButtonMask::OK:
+        return "Ok";
+    case ButtonMask::UP:
+        return "Up";
+    case ButtonMask::LEFT:
+        return "Left";
+    case ButtonMask::START:
+        return "Start";
+    case ButtonMask::DOWN:
+        return "Down";
+    case ButtonMask::STOP:
+        return "Stop";
+    case ButtonMask::HOME:
+        return "Home";
+    }
+    return "Unknown";
 }
 
-const bool isButtonPressed(byte sequence, ButtonMask flag)
+// cppcheck-suppress unusedFunction
+bool isButtonPressed(byte sequence, ButtonMask mask)
 {
-    return (sequence & flag) != 0; // Check if key pressed 0000{key}000, key>0 if set
+    return (sequence & (byte)mask) != 0; // Check if key pressed 0000{key}000, key>0 if set
 }
 
 // CTOR
-Epson_PNL_CE02::Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin,
-                               int serInPin, int latchPin, int lcdWritePin)
-{
-    Epson_PNL_CE02::oePin = oePin;
-    Epson_PNL_CE02::serOutPin = serOutPin;
-    Epson_PNL_CE02::powerButtonPin = powerButtonPin;
-    Epson_PNL_CE02::clockPin = clockPin;
-    Epson_PNL_CE02::serInPin = serInPin;
-    Epson_PNL_CE02::latchPin = latchPin;
-}
+Epson_PNL_CE02::Epson_PNL_CE02(Epson_PNL_CE02_Pinout *pPinout) : pins(pPinout) {}
 
 // PUBLICS
-void Epson_PNL_CE02::begin()
+void Epson_PNL_CE02::begin() const
 {
-    pinMode(powerButtonPin, INPUT);
+    pinMode(pins->power_button, INPUT);
 
-    pinMode(oePin, OUTPUT);
-    pinMode(latchPin, OUTPUT);
-    pinMode(clockPin, OUTPUT);
-    pinMode(serInPin, OUTPUT);
-    pinMode(serOutPin, INPUT);
+    pinMode(pins->extender_oe, OUTPUT);
+    pinMode(pins->latch, OUTPUT);
+    pinMode(pins->clock, OUTPUT);
+    pinMode(pins->serial_in, OUTPUT);
+    pinMode(pins->serial_out, INPUT);
 
-    SPI.begin();
-    SPI.beginTransaction(SPISettings(F_CPU / 2, MSBFIRST, SPI_MODE0)); // Max SPI speed
+    SPIClass::begin();
+    SPIClass::beginTransaction(SPISettings(F_CPU / 2, MSBFIRST, SPI_MODE0)); // Max SPI speed
 
-    digitalWrite(oePin, LOW);
+    digitalWrite(pins->extender_oe, LOW);
 }
 
+// cppcheck-suppress unusedFunction
 void Epson_PNL_CE02::extenderWrite(ExtenderPin pin, byte mode)
 {
-    bitWrite(buffer, pin, mode);
+    bitWrite(buffer, (byte)pin, mode);
     synchronize();
 }
 
+// cppcheck-suppress unusedFunction
 void Epson_PNL_CE02::displayWrite(byte data)
 {
-    SPI.transfer(data);
+    SPIClass::transfer(data);
 }
 
 byte Epson_PNL_CE02::readButtons()
@@ -103,20 +111,21 @@ byte Epson_PNL_CE02::readButtons()
     return synchronize();
 }
 
-bool Epson_PNL_CE02::isPowerButtonPressed()
+// cppcheck-suppress unusedFunction
+bool Epson_PNL_CE02::isPowerButtonPressed() const
 {
-    return digitalRead(powerButtonPin) == LOW;
+    return digitalRead(pins->power_button) == LOW;
 }
 
 // PRIVATES
-
-byte Epson_PNL_CE02::synchronize()
+byte Epson_PNL_CE02::synchronize() const
 {
     // STEP 1: Send control information (Power LED, LCD backlight, LCD CS, LCD D/C) through 74HC595
-    digitalWrite(latchPin, LOW); // enables parallel inputs
-    SPI.transfer(buffer);
+    digitalWrite(pins->latch, LOW); // enables parallel inputs
+    SPIClass::transfer(buffer);
     // STEP 2: Receive buttons inputs through 74LV165A
-    digitalWrite(latchPin, HIGH); // disable parallel inputs and enable serial output
+    digitalWrite(pins->latch, HIGH); // disable parallel inputs and enable serial output
 
-    return 0b11111111 ^ SPI.transfer(0xff); // read buttons (invert cause output is HIGH)
+    const byte FULL_MASK = 0b11111111;
+    return FULL_MASK ^ SPIClass::transfer(FULL_MASK); // read buttons (invert cause output is HIGH)
 }

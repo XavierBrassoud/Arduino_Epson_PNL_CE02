@@ -71,41 +71,35 @@ extern Epson_PNL_CE02 controlPanel;
 #define write_8(x) ({ controlPanel.displayWrite(x); })
 
 #define read_8() (PINC)
-#define setWriteDir()                                                                                                  \
-    {                                                                                                                  \
-        DDRC = 0xFF;                                                                                                   \
-    }
-#define setReadDir()                                                                                                   \
-    {                                                                                                                  \
-        DDRC = 0x00;                                                                                                   \
-    }
+#define setWriteDir() ({ DDRC = 0xFF; })
+#define setReadDir() ({ DDRC = 0x00; })
 #define write8(x)                                                                                                      \
-    {                                                                                                                  \
+    ({                                                                                                                 \
         write_8(x);                                                                                                    \
         WR_ACTIVE;                                                                                                     \
         WR_STROBE;                                                                                                     \
-    }
+    })
 #define write16(x)                                                                                                     \
-    {                                                                                                                  \
+    ({                                                                                                                 \
         uint8_t h = (x) >> 8, l = x;                                                                                   \
         write8(h);                                                                                                     \
         write8(l);                                                                                                     \
-    }
+    })
 #define READ_8(dst)                                                                                                    \
-    {                                                                                                                  \
+    ({                                                                                                                 \
         RD_STROBE;                                                                                                     \
         dst = read_8();                                                                                                \
         RD_IDLE;                                                                                                       \
-    }
+    })
 #define READ_16(dst)                                                                                                   \
-    {                                                                                                                  \
+    ({                                                                                                                 \
         RD_STROBE;                                                                                                     \
         dst = read_8();                                                                                                \
         RD_IDLE;                                                                                                       \
         RD_STROBE;                                                                                                     \
         dst = (dst << 8) | read_8();                                                                                   \
         RD_IDLE;                                                                                                       \
-    }
+    })
 
 #define PIN_LOW(p, b)                                                                                                  \
     ({                                                                                                                 \

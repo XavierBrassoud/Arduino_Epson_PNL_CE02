@@ -11,6 +11,7 @@ Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540 prin
 - [Let's play!](#lets-play)
 - [Using display](#using-display)
 - [Library documentation](#library-documentation)
+  - [Epson\_PNL\_CE02\_Pinout Struct](#epson_pnl_ce02_pinout-struct)
   - [Epson\_PNL\_CE02 Class](#epson_pnl_ce02-class)
     - [Constructor](#constructor)
     - [Functions](#functions)
@@ -81,20 +82,19 @@ Happy hacking!
 ``` c++
 #include <Epson_PNL_CE02.h>
 
-enum
-{
+Epson_PNL_CE02_Pinout pinout = {
     /* Control panel to Arduino pinout */
-    EXTENDER_OE = 45,  // FFC 1
-    SERIAL_OUT = 50,   // SPI MISO / FFC 2
-    POWER_BUTTON = 46, // FFC 4
-    LCD_RESET = 47,    // FFC 6
-    CLOCK = 52,        // SPI SCK / FFC 9
-    SERIAL_IN = 51,    // SPI MOSI / FFC 10
-    LATCH = 48,        // FFC 11
-    LCD_WRITE = 49,    // FFC 13
+    .EXTENDER_OE = 45,  // FFC 1
+    .SERIAL_OUT = 50,   // SPI MISO / FFC 2
+    .POWER_BUTTON = 46, // FFC 4
+    .LCD_RESET = 47,    // FFC 6
+    .CLOCK = 52,        // SPI SCK / FFC 9
+    .SERIAL_IN = 51,    // SPI MOSI / FFC 10
+    .LATCH = 48,        // FFC 11
+    .LCD_WRITE = 49,    // FFC 13
 };
 
-Epson_PNL_CE02 controlPanel(EXTENDER_OE, SERIAL_OUT, POWER_BUTTON, LCD_RESET, CLOCK, SERIAL_IN, LATCH, LCD_WRITE);
+Epson_PNL_CE02 controlPanel(&pinout);
 
 void setup()
 {
@@ -106,11 +106,11 @@ void loop()
 {
     switch (controlPanel.readButtons())
     {
-    case OK:
+    case ButtonMask::OK:
         Serial.println("Button OK pressed!");
         break;
-    case OK | HOME:
-        Serial.println("Button OK and button LEFT pressed!");
+    case ButtonMask::OK | ButtonMask::HOME:
+        Serial.println("Button OK and button HOME pressed!");
         break;
     }
 
@@ -161,20 +161,19 @@ Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCU
 #include <Adafruit_GFX.h>
 #include <MCUFRIEND_kbv.h>
 
-enum
-{
+Epson_PNL_CE02_Pinout pinout = {
     /* Control panel to Arduino pinout */
-    EXTENDER_OE = 45,  // FFC 1
-    SERIAL_OUT = 50,   // SPI MISO / FFC 2
-    POWER_BUTTON = 46, // FFC 4
-    LCD_RESET = 47,    // FFC 6
-    CLOCK = 52,        // SPI SCK / FFC 9
-    SERIAL_IN = 51,    // SPI MOSI / FFC 10
-    LATCH = 48,        // FFC 11
-    LCD_WRITE = 49,    // FFC 13
+    .EXTENDER_OE = 45,  // FFC 1
+    .SERIAL_OUT = 50,   // SPI MISO / FFC 2
+    .POWER_BUTTON = 46, // FFC 4
+    .LCD_RESET = 47,    // FFC 6
+    .CLOCK = 52,        // SPI SCK / FFC 9
+    .SERIAL_IN = 51,    // SPI MOSI / FFC 10
+    .LATCH = 48,        // FFC 11
+    .LCD_WRITE = 49,    // FFC 13
 };
 
-Epson_PNL_CE02 controlPanel(EXTENDER_OE, SERIAL_OUT, POWER_BUTTON, LCD_RESET, CLOCK, SERIAL_IN, LATCH, LCD_WRITE);
+Epson_PNL_CE02 controlPanel(&pinout);
 
 MCUFRIEND_kbv tft;
 
@@ -183,10 +182,10 @@ void setup()
     controlPanel.begin();
 
     // STEP 1: Turn display ON
-    controlPanel.extenderWrite(LCD_BACKLIGHT, HIGH);
+    controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, HIGH);
 
     // STEP 2: INIT display
-    tft.begin(0x9163); // ILI9163C
+    tft.begin(0x9163); // Force ILI9163C as the control panel wired the display in write-only mode
 
     // STEP 3: Use display
     tft.fillScreen(TFT_RED);
@@ -204,21 +203,26 @@ void loop()
 
 ## Library documentation
 
+### Epson_PNL_CE02_Pinout Struct
+
+| Member           | Pin | Description                                                            |
+| ---------------- | --- | ---------------------------------------------------------------------- |
+| `EXTENDER_OE`    | #1  | Extender output enable pin. Unused.                                    |
+| `SERIAL_OUT`     | #2  | Serial output pin. Read value for buttons. (SPI MISO)                  |
+| `POWER_BUTTON`   | #4  | Dedicated pin for the power button.                                    |
+| `LCD_RESET`      | #6  | Display reset pin. Refer to ["Using display"](#using-display) section. |
+| `CLOCK`          | #9  | Shared clock pin for extender, buttons and display. (SPI SCK)          |
+| `SERIAL_IN`      | #10 | Serial input pin. Write value in extender. (SPI MOSI)                  |
+| `LATCH`          | #11 | Write extender selector.                                               |
+| `LCD_WRITE`      | #13 | Display write pin. Refer to ["Using display"](#using-display) section. |
 
 ### Epson_PNL_CE02 Class
 
 #### Constructor
 
-| Parameter        | Description                                                   |
-| ---------------- | ------------------------------------------------------------- |
-| `oePin`          | Extender output enable pin. Unused.                           |
-| `serOutPin`      | Serial output pin. Read value for buttons. (SPI MISO)         |
-| `powerButtonPin` | Dedicated pin for the power button.                           |
-| `lcdResetPin`    | Display reset pin.                                            |
-| `clockPin`       | Shared clock pin for extender, buttons and display. (SPI SCK) |
-| `serInPin`       | Serial input pin. Write value in extender. (SPI MOSI)         |
-| `latchPin`       | Write extender selector.                                      |
-| `lcdWritePin`    | Display write pin.                                            |
+| Parameter        | Description                                                            |
+| ---------------- | ---------------------------------------------------------------------- |
+| `pPinout`        | Reference to [`Epson_PNL_CE02_Pinout`](#epson_pnl_ce02_pinout-struct). |
 
 #### Functions
 

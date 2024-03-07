@@ -42,20 +42,19 @@
 
 #include <Epson_PNL_CE02.h>
 
-enum
-{
+Epson_PNL_CE02_Pinout pinout = {
     /* Control panel to Arduino pinout */
-    EXTENDER_OE = 45,  // FFC 1
-    SERIAL_OUT = 50,   // SPI MISO / FFC 2
-    POWER_BUTTON = 46, // FFC 4
-    LCD_RESET = 47,    // FFC 6
-    CLOCK = 52,        // SPI SCK / FFC 9
-    SERIAL_IN = 51,    // SPI MOSI / FFC 10
-    LATCH = 48,        // FFC 11
-    LCD_WRITE = 49,    // FFC 13
+    .EXTENDER_OE = 45,  // FFC 1
+    .SERIAL_OUT = 50,   // SPI MISO / FFC 2
+    .POWER_BUTTON = 46, // FFC 4
+    .LCD_RESET = 47,    // FFC 6
+    .CLOCK = 52,        // SPI SCK / FFC 9
+    .SERIAL_IN = 51,    // SPI MOSI / FFC 10
+    .LATCH = 48,        // FFC 11
+    .LCD_WRITE = 49,    // FFC 13
 };
 
-Epson_PNL_CE02 controlPanel(EXTENDER_OE, SERIAL_OUT, POWER_BUTTON, LCD_RESET, CLOCK, SERIAL_IN, LATCH, LCD_WRITE);
+Epson_PNL_CE02 controlPanel(&pinout);
 
 /******************************* MCUFRIEND_kbv *******************************/
 
@@ -85,7 +84,7 @@ OneButton *homeButton;
 OneButton *homeOkButton;
 
 // Power button has a dedicated pin
-OneButton powerButton(POWER_BUTTON);
+OneButton powerButton(pinout.POWER_BUTTON);
 
 void printClick(void *button)
 {
@@ -107,10 +106,10 @@ void togglePower()
     powerState = !powerState;
 
     // send new power LED state.
-    controlPanel.extenderWrite(POWER_LED, !powerState);
+    controlPanel.extenderWrite(ExtenderPin::POWER_LED, !powerState);
 
     // send new power SCREEN state.
-    controlPanel.extenderWrite(LCD_BACKLIGHT, powerState);
+    controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, powerState);
 }
 
 // function declarations
@@ -119,7 +118,7 @@ void setup()
     Serial.begin(BAUD_RATE);
     controlPanel.begin();
 
-    controlPanel.extenderWrite(LCD_BACKLIGHT, HIGH);
+    controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, HIGH);
     tft.begin(0x9163); // ILI9163C
 
     rightButton = new OneButton();
@@ -166,17 +165,18 @@ void loop()
 {
     byte buttonsSequence = controlPanel.readButtons();
 
-    rightButton->tick(isButtonPressed(buttonsSequence, RIGHT));
-    okButton->tick(isButtonPressed(buttonsSequence, OK));
-    upButton->tick(isButtonPressed(buttonsSequence, UP));
-    leftButton->tick(isButtonPressed(buttonsSequence, LEFT));
-    startButton->tick(isButtonPressed(buttonsSequence, START));
-    downButton->tick(isButtonPressed(buttonsSequence, DOWN));
-    stopButton->tick(isButtonPressed(buttonsSequence, STOP));
-    homeButton->tick(isButtonPressed(buttonsSequence, HOME));
+    rightButton->tick(isButtonPressed(buttonsSequence, ButtonMask::RIGHT));
+    okButton->tick(isButtonPressed(buttonsSequence, ButtonMask::OK));
+    upButton->tick(isButtonPressed(buttonsSequence, ButtonMask::UP));
+    leftButton->tick(isButtonPressed(buttonsSequence, ButtonMask::LEFT));
+    startButton->tick(isButtonPressed(buttonsSequence, ButtonMask::START));
+    downButton->tick(isButtonPressed(buttonsSequence, ButtonMask::DOWN));
+    stopButton->tick(isButtonPressed(buttonsSequence, ButtonMask::STOP));
+    homeButton->tick(isButtonPressed(buttonsSequence, ButtonMask::HOME));
 
     // Custom isButtonPressed bits manipulation
-    homeOkButton->tick(isButtonPressed(buttonsSequence, HOME) && isButtonPressed(buttonsSequence, OK));
+    homeOkButton->tick(isButtonPressed(buttonsSequence, ButtonMask::HOME) &&
+                       isButtonPressed(buttonsSequence, ButtonMask::OK));
 
     powerButton.tick();
 
