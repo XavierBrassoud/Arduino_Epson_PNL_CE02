@@ -45,7 +45,7 @@
 /**
  * @brief Buttons 8-bit mapping.
  */
-enum class ButtonMask : byte
+enum class ButtonMask : byte // NOLINT(readability-identifier-naming): Bug clangtidy v15: enum detected as variable
 {
     RIGHT = 0b10000000, // 0b11111110
     OK = 0b01000000,    // 0b11111101
@@ -60,7 +60,7 @@ enum class ButtonMask : byte
 /**
  * @brief Shift register pins (VHC595)
  */
-enum class ExtenderPin : byte
+enum class ExtenderPin : byte // NOLINT(readability-identifier-naming): Bug clangtidy v15: enum detected as variable
 {
     /**
      * @brief Control the state of the power led (active LOW).
@@ -103,9 +103,10 @@ bool isButtonPressed(byte sequence, ButtonMask mask);
 
 /**
  * @brief Control panel to Arduino pinout.
- * 
+ *
  */
-struct Epson_PNL_CE02_Pinout {
+struct Epson_PNL_CE02_Pinout
+{
 
     /**
      * @brief [UNUSED] Extender output enable pin.
@@ -172,7 +173,7 @@ struct Epson_PNL_CE02_Pinout {
  * }
  * ```
  */
-class Epson_PNL_CE02
+class Epson_PNL_CE02 // NOLINT(readability-identifier-naming): Exception to follow common Arduino Library style naming
 {
 
   public:

@@ -70,27 +70,29 @@ const char *buttonName(ButtonMask mask)
 // cppcheck-suppress unusedFunction
 bool isButtonPressed(byte sequence, ButtonMask mask)
 {
-    return (sequence & (byte)mask) != 0; // Check if key pressed 0000{key}000, key>0 if set
+    return (sequence & static_cast<byte>(mask)) != 0; // Check if key pressed 0000{key}000, key>0 if set
 }
 
 // CTOR
-Epson_PNL_CE02::Epson_PNL_CE02(Epson_PNL_CE02_Pinout *pPinout) : pins(pPinout) {}
+Epson_PNL_CE02::Epson_PNL_CE02(Epson_PNL_CE02_Pinout *pPinout) : pins(pPinout)
+{
+}
 
 // PUBLICS
 void Epson_PNL_CE02::begin() const
 {
-    pinMode(pins->power_button, INPUT);
+    pinMode(pins->POWER_BUTTON, INPUT);
 
-    pinMode(pins->extender_oe, OUTPUT);
-    pinMode(pins->latch, OUTPUT);
-    pinMode(pins->clock, OUTPUT);
-    pinMode(pins->serial_in, OUTPUT);
-    pinMode(pins->serial_out, INPUT);
+    pinMode(pins->EXTENDER_OE, OUTPUT);
+    pinMode(pins->LATCH, OUTPUT);
+    pinMode(pins->CLOCK, OUTPUT);
+    pinMode(pins->SERIAL_IN, OUTPUT);
+    pinMode(pins->SERIAL_OUT, INPUT);
 
     SPIClass::begin();
     SPIClass::beginTransaction(SPISettings(F_CPU / 2, MSBFIRST, SPI_MODE0)); // Max SPI speed
 
-    digitalWrite(pins->extender_oe, LOW);
+    digitalWrite(pins->EXTENDER_OE, LOW);
 }
 
 // cppcheck-suppress unusedFunction
@@ -114,17 +116,17 @@ byte Epson_PNL_CE02::readButtons()
 // cppcheck-suppress unusedFunction
 bool Epson_PNL_CE02::isPowerButtonPressed() const
 {
-    return digitalRead(pins->power_button) == LOW;
+    return digitalRead(pins->POWER_BUTTON) == LOW;
 }
 
 // PRIVATES
 byte Epson_PNL_CE02::synchronize() const
 {
     // STEP 1: Send control information (Power LED, LCD backlight, LCD CS, LCD D/C) through 74HC595
-    digitalWrite(pins->latch, LOW); // enables parallel inputs
+    digitalWrite(pins->LATCH, LOW); // enables parallel inputs
     SPIClass::transfer(buffer);
     // STEP 2: Receive buttons inputs through 74LV165A
-    digitalWrite(pins->latch, HIGH); // disable parallel inputs and enable serial output
+    digitalWrite(pins->LATCH, HIGH); // disable parallel inputs and enable serial output
 
     const byte FULL_MASK = 0b11111111;
     return FULL_MASK ^ SPIClass::transfer(FULL_MASK); // read buttons (invert cause output is HIGH)
