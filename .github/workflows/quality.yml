@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
       # - name: arduino-lint
       #   uses: arduino/arduino-lint-action@v1
       #   with:
