@@ -16,22 +16,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
-
       # - name: arduino-lint
       #   uses: arduino/arduino-lint-action@v1
       #   with:
       #     library-manager: update
       #     compliance: strict
 
-      - uses: cpp-linter/cpp-linter-action@v2
+      - name: Cache pio and pip
+        uses: actions/cache@v3
         with:
-          style: 'file'  # Use .clang-format config file
-          tidy-checks: '' # Use .clang-tidy config file
-          tidy-review: true # Enable clang suggestions in PRs
-          files-changed-only: false
-          version: 19
-          ignore: extras
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: PIO Lint
+        run: pio check --fail-on-defect=high --fail-on-defect=medium
