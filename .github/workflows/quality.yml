@@ -22,6 +22,12 @@ jobs:
       #     library-manager: update
       #     compliance: strict
 
+      - name: Code format
+        uses: jidicula/clang-format-action@v4.11.0
+        with:
+          clang-format-version: '15' # equals to PIO clang version
+          check-path: 'src'
+
       - name: Cache pio and pip
         uses: actions/cache@v3
         with:
@@ -37,5 +43,5 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
-      - name: PIO Lint
+      - name: Code lint
         run: pio check --fail-on-defect=high --fail-on-defect=medium
