@@ -74,9 +74,7 @@ bool isButtonPressed(byte sequence, ButtonMask mask)
 }
 
 // CTOR
-Epson_PNL_CE02::Epson_PNL_CE02(Epson_PNL_CE02_Pinout *pPinout) : pins(pPinout)
-{
-}
+Epson_PNL_CE02::Epson_PNL_CE02(Epson_PNL_CE02_Pinout *pPinout) : pins(pPinout) { }
 
 // PUBLICS
 void Epson_PNL_CE02::begin() const
