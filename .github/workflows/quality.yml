@@ -15,7 +15,7 @@ jobs:
   lint:
     needs: clone
     permissions:
-      id-token: write # This is required for requesting the JWT
+      contents: write
       pull-requests: write
 
     runs-on: ubuntu-latest
