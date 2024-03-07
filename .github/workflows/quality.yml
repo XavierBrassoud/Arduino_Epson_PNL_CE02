@@ -22,6 +22,8 @@ jobs:
         with:
           style: 'file'  # Use .clang-format config file
           tidy-checks: '' # Use .clang-tidy config file
+          tidy-review: true # Enable clang suggestions in PRs
           files-changed-only: false
+          version: 15 # PIO embeded clang version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
