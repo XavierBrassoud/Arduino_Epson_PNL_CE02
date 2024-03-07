@@ -15,7 +15,9 @@ jobs:
   lint:
     needs: clone
     permissions:
+      id-token: write # This is required for requesting the JWT
       pull-requests: write
+
     runs-on: ubuntu-latest
     steps:
       # - name: arduino-lint
