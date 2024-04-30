@@ -19,5 +19,5 @@ jobs:
       - name: Write new version to packages
         uses: google-github-actions/release-please-action@v4
         with:
-          command: manifest
           token: ${{ secrets.MAINTAINER_PAT }}
+          target-branch: ${{ github.ref_name }}
