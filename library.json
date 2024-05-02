@@ -21,15 +21,58 @@
     "platforms": "*",
     "examples": [
         {
-            "name": "CE02test",
-            "base": "examples/OneButton",
+            "name": "blink",
+            "base": "examples/blink",
             "files": [
+                "platformio.ini",
                 "src/Epson_PNL_CE02.h",
                 "src/Epson_PNL_CE02.cpp",
-                "OneButton.cpp"
+                "blink.ino"
+            ]
+        },
+        {
+            "name": "buttons",
+            "base": "examples/buttons",
+            "files": [
+                "platformio.ini",
+                "src/Epson_PNL_CE02.h",
+                "src/Epson_PNL_CE02.cpp",
+                "buttons.ino"
+            ]
+        },
+        {
+            "name": "display",
+            "base": "examples/display",
+            "files": [
+                "platformio.ini",
+                "src/Epson_PNL_CE02.h",
+                "src/Epson_PNL_CE02.cpp",
+                "display.ino"
             ],
             "dependencies": {
-                "mathertel/OneButton": "^2.5.0"
+                "prenticedavid/MCUFRIEND_kbv": "^3",
+                "adafruit/Adafruit GFX Library": "^1",
+                "adafruit/Adafruit BusIO": "^1",
+                "Wire": "*",
+                "SPI": "*"
+            }
+        },
+        {
+            "name": "buttons",
+            "base": "examples/full",
+            "files": [
+                "platformio.ini",
+                "src/Epson_PNL_CE02.h",
+                "src/Epson_PNL_CE02.cpp",
+                "full.ino"
+            ],
+            "dependencies": {
+                "mathertel/OneButton": "^2.5.0",
+                "prenticedavid/MCUFRIEND_kbv": "^3",
+                "adafruit/Adafruit GFX Library": "^1",
+                "adafruit/Adafruit BusIO": "^1",
+                "Wire": "*",
+                "SPI": "*"
             }
         }
     ]
