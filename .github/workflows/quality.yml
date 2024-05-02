@@ -1,0 +1,51 @@
+---
+name: Quality Gates
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+  workflow_dispatch: # Allows to trigger the workflow manually in GitHub UI
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: arduino-lint
+        uses: arduino/arduino-lint-action@v1
+        with:
+          library-manager: submit # TODO: swith to "update" when approved by the Arduino Team
+          compliance: strict
+
+      - name: Code format
+        uses: jidicula/clang-format-action@v4.11.0
+        with:
+          clang-format-version: '15' # equals to PIO clang version
+          check-path: 'src'
+
+      - name: Cache pio and pip
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Code lint
+        run: pio check --fail-on-defect=high --fail-on-defect=medium

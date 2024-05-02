@@ -27,26 +27,25 @@
  * | 12  | GND                                       | -             |
  * | 13  | LCD write  (+3.3V !)                      | 49 ⚡         |
  * | 14  | GND                                       | -             |
- * 
+ *
  * ⚡ Require a 3.3v level-shifter, screen makes shadows and may be destroyed after long use.
  * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
  *
  *
- * @version 0.0
- * @date 2023-12-22
+ * @version 0.0.0  # x-release-please-version
  *
  * @copyright MIT license
  */
 
-#ifndef Epson_PNL_CE02_H
-#define Epson_PNL_CE02_H
+#ifndef EPSON_PNL_CE02_H
+#define EPSON_PNL_CE02_H
 
 #include <Arduino.h>
 
 /**
  * @brief Buttons 8-bit mapping.
  */
-enum ButtonMask
+enum class ButtonMask : byte // NOLINT(readability-identifier-naming): Bug clangtidy v15: enum detected as variable
 {
     RIGHT = 0b10000000, // 0b11111110
     OK = 0b01000000,    // 0b11111101
@@ -61,7 +60,7 @@ enum ButtonMask
 /**
  * @brief Shift register pins (VHC595)
  */
-enum ExtenderPin
+enum class ExtenderPin : byte // NOLINT(readability-identifier-naming): Bug clangtidy v15: enum detected as variable
 {
     /**
      * @brief Control the state of the power led (active LOW).
@@ -74,12 +73,12 @@ enum ExtenderPin
     LCD_BACKLIGHT = 6,
 
     /**
-     * @brief Control the state of the display CS pin (ChipSelect, active HIGH).
+     * @brief Control the state of the display ChipSelect pin (active HIGH).
      */
     LCD_CS = 5,
 
     /**
-     * @brief Control the state of the display D/C pin (Data / Command, active HIGH).
+     * @brief Control the state of the display Data/Command pin (active HIGH).
      */
     LCD_DC = 4
 };
@@ -100,7 +99,63 @@ const char *buttonName(ButtonMask mask);
  * @return true
  * @return false
  */
-const bool isButtonPressed(byte sequence, ButtonMask mask);
+bool isButtonPressed(byte sequence, ButtonMask mask);
+
+/**
+ * @brief Control panel to Arduino pinout.
+ *
+ */
+struct Epson_PNL_CE02_Pinout
+{
+
+    /**
+     * @brief [UNUSED] Extender output enable pin.
+     * Pin #1
+     */
+    const byte EXTENDER_OE;
+
+    /**
+     * @brief Serial output pin. Read value for buttons. (SPI MISO)
+     * Pin #2
+     */
+    const byte SERIAL_OUT;
+
+    /**
+     * @brief Dedicated pin for the power button.
+     * Pin #4
+     */
+    const byte POWER_BUTTON;
+
+    /**
+     * @brief Display reset pin. Refer to "Using display" section.
+     * Pin #6
+     */
+    const byte LCD_RESET;
+
+    /**
+     * @brief Shared clock pin for extender, buttons and display. (SPI SCK)
+     * Pin #9
+     */
+    const byte CLOCK;
+
+    /**
+     * @brief Serial input pin. Write value in extender. (SPI MOSI)
+     * Pin #10
+     */
+    const byte SERIAL_IN;
+
+    /**
+     * @brief Write extender selector.
+     * Pin #11
+     */
+    const byte LATCH;
+
+    /**
+     * @brief Display write pin. Refer to "Using display" section.
+     * Pin #13
+     */
+    const byte LCD_WRITE;
+};
 
 /**
  * @brief Board class controller.
@@ -118,28 +173,21 @@ const bool isButtonPressed(byte sequence, ButtonMask mask);
  * }
  * ```
  */
-class Epson_PNL_CE02
+class Epson_PNL_CE02 // NOLINT(readability-identifier-naming): Exception to follow common Arduino Library style naming
 {
 
-public:
+  public:
     /**
      * @brief Construct a new Epson_PNL_CE02 object
      *
-     * @param oePin Extender output enable pin. Unused.
-     * @param serOutPin Serial output pin. Read value for buttons. (SPI MISO)
-     * @param powerButtonPin Dedicated pin for the power button.
-     * @param lcdResetPin Display reset pin.
-     * @param clockPin Shared clock pin for extender, buttons and display. (SPI SCK)
-     * @param serInPin Serial input pin. Write value in extender. (SPI MOSI)
-     * @param latchPin Write extender selector.
-     * @param lcdWritePin Display write pin.
+     * @param pPinout Reference to Epson_PNL_CE02_Pinout structure.
      */
-    Epson_PNL_CE02(int oePin, int serOutPin, int powerButtonPin, int lcdResetPin, int clockPin, int serInPin, int latchPin, int lcdWritePin);
+    explicit Epson_PNL_CE02(Epson_PNL_CE02_Pinout *pPinout);
 
     /**
      * @brief Set pins directions and initialize SPI bus.
      */
-    void begin();
+    void begin() const;
 
     /**
      * @brief Send a HIGH or a LOW value to the control panel extender pin (refer to ExtenderPin).
@@ -154,7 +202,7 @@ public:
      *
      * @param data parallel data (D0-D7) byte
      */
-    void displayWrite(byte data);
+    static void displayWrite(byte data);
 
     /**
      * @brief Read current pressed buttons in 8-bit sequence (`0`: no pressed, `1`: pressed).
@@ -171,12 +219,11 @@ public:
      * @return true
      * @return false
      */
-    bool isPowerButtonPressed();
+    bool isPowerButtonPressed() const;
 
-private:
-    unsigned int oePin, serOutPin, powerButtonPin, clockPin, serInPin, latchPin;
-    byte buttonsSequence; // SERIAL OUT 74LV165A - All buttons except power
-    byte buffer;          // SERIAL IN 74HC595 - Control panel extender (refer to ExtenderPin)
+  private:
+    Epson_PNL_CE02_Pinout *pins;
+    byte buffer{0b0}; // SERIAL IN 74HC595 - Control panel extender (refer to ExtenderPin)
 
     /**
      * @brief Read and write to shift registers that control buttons, power led and display.
@@ -184,7 +231,7 @@ private:
      *
      * @return byte Current pressed buttons in 8-bit sequence
      */
-    byte synchronize();
+    byte synchronize() const;
 };
 
-#endif //  Epson_PNL_CE02_H
+#endif // Epson_PNL_CE02_H

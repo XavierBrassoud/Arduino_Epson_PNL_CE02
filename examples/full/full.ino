@@ -4,7 +4,6 @@
  * @brief Full playground using Epson_PNL_CE02 library with OneButton library
  * and MCUFRIEND_kbv. See "display" example to wire the display correctly.
  * @version 1.0
- * @date 2023-12-22
  *
  * @copyright MIT license
  *
@@ -24,17 +23,17 @@
  * | 12  | GND                                       | -             |
  * | 13  | LCD write  (+3.3V !)                      | 49 ⚡         |
  * | 14  | GND                                       | -             |
- * 
+ *
  * ⚡ Require a 3.3v level-shifter, screen makes shadows and may be destroyed after long use.
  * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
- * 
+ *
  * Fix OneButton issue: https://github.com/mathertel/OneButton/issues/136#issuecomment-1891117014
  */
 
 #if defined(ARDUINO_ARCH_AVR)
-    #define BAUD_RATE 115200
+#define BAUD_RATE 115200
 #else
-    #define BAUD_RATE 9600
+#define BAUD_RATE 9600
 #endif
 
 // install the OneButton library via Library Manager
@@ -43,20 +42,19 @@
 
 #include <Epson_PNL_CE02.h>
 
-enum
-{
+Epson_PNL_CE02_Pinout pinout = {
     /* Control panel to Arduino pinout */
-    EXTENDER_OE = 45,  // FFC 1
-    SERIAL_OUT = 50,   // SPI MISO / FFC 2
-    POWER_BUTTON = 46, // FFC 4
-    LCD_RESET = 47,    // FFC 6
-    CLOCK = 52,        // SPI SCK / FFC 9
-    SERIAL_IN = 51,    // SPI MOSI / FFC 10
-    LATCH = 48,        // FFC 11
-    LCD_WRITE = 49,    // FFC 13
+    .EXTENDER_OE = 45,  // FFC 1
+    .SERIAL_OUT = 50,   // SPI MISO / FFC 2
+    .POWER_BUTTON = 46, // FFC 4
+    .LCD_RESET = 47,    // FFC 6
+    .CLOCK = 52,        // SPI SCK / FFC 9
+    .SERIAL_IN = 51,    // SPI MOSI / FFC 10
+    .LATCH = 48,        // FFC 11
+    .LCD_WRITE = 49,    // FFC 13
 };
 
-Epson_PNL_CE02 controlPanel(EXTENDER_OE, SERIAL_OUT, POWER_BUTTON, LCD_RESET, CLOCK, SERIAL_IN, LATCH, LCD_WRITE);
+Epson_PNL_CE02 controlPanel(&pinout);
 
 /******************************* MCUFRIEND_kbv *******************************/
 
@@ -86,100 +84,101 @@ OneButton *homeButton;
 OneButton *homeOkButton;
 
 // Power button has a dedicated pin
-OneButton powerButton(POWER_BUTTON);
+OneButton powerButton(pinout.POWER_BUTTON);
 
 void printClick(void *button)
 {
-  Serial.print("Click: ");
-  Serial.println((char *)button);
+    Serial.print("Click: ");
+    Serial.println((char *)button);
 }
 
 void colorClick(void *color)
 {
-  tft.fillScreen((uint16_t)color);
+    tft.fillScreen((uint16_t)color);
 }
 
 byte powerState = HIGH;
 void togglePower()
 {
-  Serial.println("Click: power long - toggle power");
+    Serial.println("Click: power long - toggle power");
 
-  // reverse power (turns off when on, on when off)
-  powerState = !powerState;
+    // reverse power (turns off when on, on when off)
+    powerState = !powerState;
 
-  // send new power LED state.
-  controlPanel.extenderWrite(POWER_LED, !powerState);
+    // send new power LED state.
+    controlPanel.extenderWrite(ExtenderPin::POWER_LED, !powerState);
 
-  // send new power SCREEN state.
-  controlPanel.extenderWrite(LCD_BACKLIGHT, powerState);
+    // send new power SCREEN state.
+    controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, powerState);
 }
 
 // function declarations
 void setup()
 {
-  Serial.begin(BAUD_RATE);
-  controlPanel.begin();
+    Serial.begin(BAUD_RATE);
+    controlPanel.begin();
 
-  controlPanel.extenderWrite(LCD_BACKLIGHT, HIGH);
-  tft.begin(0x9163); // ILI9163C
+    controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, HIGH);
+    tft.begin(0x9163); // ILI9163C
 
-  rightButton = new OneButton();
-  okButton = new OneButton();
-  upButton = new OneButton();
-  leftButton = new OneButton();
-  startButton = new OneButton();
-  downButton = new OneButton();
-  stopButton = new OneButton();
-  homeButton = new OneButton();
+    rightButton = new OneButton();
+    okButton = new OneButton();
+    upButton = new OneButton();
+    leftButton = new OneButton();
+    startButton = new OneButton();
+    downButton = new OneButton();
+    stopButton = new OneButton();
+    homeButton = new OneButton();
 
-  homeOkButton = new OneButton();
+    homeOkButton = new OneButton();
 
-  // Single buttons events
-  rightButton->attachClick(printClick, (void *)"right");
-  okButton->attachClick(printClick, (void *)"ok");
-  upButton->attachClick(printClick, (void *)"up");
-  leftButton->attachClick(printClick, (void *)"left");
-  startButton->attachClick(printClick, (void *)"start");
-  downButton->attachClick(printClick, (void *)"down");
-  stopButton->attachClick(printClick, (void *)"stop");
-  homeButton->attachClick(printClick, (void *)"home");
-  
-  rightButton->attachClick(colorClick, (void *)TFT_LIGHTGREY);
-  okButton->attachClick(colorClick, (void *)TFT_BLUE);
-  upButton->attachClick(colorClick, (void *)TFT_ORANGE);
-  leftButton->attachClick(colorClick, (void *)TFT_MAGENTA);
-  startButton->attachClick(colorClick, (void *)TFT_GREEN);
-  downButton->attachClick(colorClick, (void *)TFT_PURPLE);
-  stopButton->attachClick(colorClick, (void *)TFT_RED);
-  homeButton->attachClick(colorClick, (void *)TFT_YELLOW);
-  
-  homeButton->attachDoubleClick(printClick, (void *)"home x2");
-  homeButton->attachLongPressStop(printClick, (void *)"home long");
+    // Single buttons events
+    rightButton->attachClick(printClick, (void *)"right");
+    okButton->attachClick(printClick, (void *)"ok");
+    upButton->attachClick(printClick, (void *)"up");
+    leftButton->attachClick(printClick, (void *)"left");
+    startButton->attachClick(printClick, (void *)"start");
+    downButton->attachClick(printClick, (void *)"down");
+    stopButton->attachClick(printClick, (void *)"stop");
+    homeButton->attachClick(printClick, (void *)"home");
 
-  // Parallel buttons events
-  homeOkButton->attachClick(printClick, (void *)"home + ok");
+    rightButton->attachClick(colorClick, (void *)TFT_LIGHTGREY);
+    okButton->attachClick(colorClick, (void *)TFT_BLUE);
+    upButton->attachClick(colorClick, (void *)TFT_ORANGE);
+    leftButton->attachClick(colorClick, (void *)TFT_MAGENTA);
+    startButton->attachClick(colorClick, (void *)TFT_GREEN);
+    downButton->attachClick(colorClick, (void *)TFT_PURPLE);
+    stopButton->attachClick(colorClick, (void *)TFT_RED);
+    homeButton->attachClick(colorClick, (void *)TFT_YELLOW);
 
-  powerButton.attachClick(printClick, (void *)"power");
-  powerButton.attachLongPressStop(togglePower);
+    homeButton->attachDoubleClick(printClick, (void *)"home x2");
+    homeButton->attachLongPressStop(printClick, (void *)"home long");
+
+    // Parallel buttons events
+    homeOkButton->attachClick(printClick, (void *)"home + ok");
+
+    powerButton.attachClick(printClick, (void *)"power");
+    powerButton.attachLongPressStop(togglePower);
 }
 
 void loop()
 {
-  byte buttonsSequence = controlPanel.readButtons();
+    byte buttonsSequence = controlPanel.readButtons();
 
-  rightButton->tick(isButtonPressed(buttonsSequence, RIGHT));
-  okButton->tick(isButtonPressed(buttonsSequence, OK));
-  upButton->tick(isButtonPressed(buttonsSequence, UP));
-  leftButton->tick(isButtonPressed(buttonsSequence, LEFT));
-  startButton->tick(isButtonPressed(buttonsSequence, START));
-  downButton->tick(isButtonPressed(buttonsSequence, DOWN));
-  stopButton->tick(isButtonPressed(buttonsSequence, STOP));
-  homeButton->tick(isButtonPressed(buttonsSequence, HOME));
+    rightButton->tick(isButtonPressed(buttonsSequence, ButtonMask::RIGHT));
+    okButton->tick(isButtonPressed(buttonsSequence, ButtonMask::OK));
+    upButton->tick(isButtonPressed(buttonsSequence, ButtonMask::UP));
+    leftButton->tick(isButtonPressed(buttonsSequence, ButtonMask::LEFT));
+    startButton->tick(isButtonPressed(buttonsSequence, ButtonMask::START));
+    downButton->tick(isButtonPressed(buttonsSequence, ButtonMask::DOWN));
+    stopButton->tick(isButtonPressed(buttonsSequence, ButtonMask::STOP));
+    homeButton->tick(isButtonPressed(buttonsSequence, ButtonMask::HOME));
 
-  // Custom isButtonPressed bits manipulation
-  homeOkButton->tick(isButtonPressed(buttonsSequence, HOME) && isButtonPressed(buttonsSequence, OK));
+    // Custom isButtonPressed bits manipulation
+    homeOkButton->tick(isButtonPressed(buttonsSequence, ButtonMask::HOME) &&
+                       isButtonPressed(buttonsSequence, ButtonMask::OK));
 
-  powerButton.tick();
+    powerButton.tick();
 
-  delay(50);
+    delay(50);
 }

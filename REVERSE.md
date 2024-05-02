@@ -22,7 +22,7 @@ We can identify 3 components, from left to right:
 
 ## Identifying display
 
-This was the hard part of this project. The only reference was GIANTPLUS printed on the flex ribbon cable of the screen. After hours of searching, I can't identify this screen.
+This was the hard part of this project. The only reference was "307328101 GIANTPLUS 1526" printed on the flex ribbon cable of the screen. After hours of searching, I can't identify this screen.
 
 The deducted information was:
  * the 8-bit parallel interface wired through the VHC164

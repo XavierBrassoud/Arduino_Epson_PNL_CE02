@@ -11,6 +11,7 @@ Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540 prin
 - [Let's play!](#lets-play)
 - [Using display](#using-display)
 - [Library documentation](#library-documentation)
+  - [Epson\_PNL\_CE02\_Pinout Struct](#epson_pnl_ce02_pinout-struct)
   - [Epson\_PNL\_CE02 Class](#epson_pnl_ce02-class)
     - [Constructor](#constructor)
     - [Functions](#functions)
@@ -18,6 +19,7 @@ Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540 prin
   - [ButtonMask](#buttonmask)
   - [ExtenderPin](#extenderpin)
 - [Credits](#credits)
+- [Like this project? :heart:](#like-this-project-heart)
 
 ## Motivation
 
@@ -41,9 +43,9 @@ Happy hacking!
 
 ## Hardware requirements
 
-  * Arduino (tested with Arduino MEGA 2560)
-  * FPC 14 pin 1.0mm adapter (avoid pads destroyed by soldering)
-  * Level shifter (5v to 3.3v)
+  * [Arduino](https://amzn.to/3y5obqz) (tested with Arduino MEGA 2560)
+  * [FPC 14 pin 1.0mm adapter](https://amzn.to/3wiy5EJ) (avoid pads destroyed by soldering)
+  * [Level shifter](https://amzn.to/3Qrx6ZL) (5v to 3.3v)
   * Control panel (PNL CE02) of EPSON XP 520/530/540 printers (obviously)
 
 ## Connecting the control panel
@@ -81,20 +83,22 @@ Happy hacking!
 ``` c++
 #include <Epson_PNL_CE02.h>
 
-enum
-{
+Epson_PNL_CE02_Pinout pinout = {
     /* Control panel to Arduino pinout */
-    EXTENDER_OE = 45,  // FFC 1
-    SERIAL_OUT = 50,   // SPI MISO / FFC 2
-    POWER_BUTTON = 46, // FFC 4
-    LCD_RESET = 47,    // FFC 6
-    CLOCK = 52,        // SPI SCK / FFC 9
-    SERIAL_IN = 51,    // SPI MOSI / FFC 10
-    LATCH = 48,        // FFC 11
-    LCD_WRITE = 49,    // FFC 13
+    .EXTENDER_OE = 45,  // FFC 1
+    .SERIAL_OUT = 50,   // SPI MISO / FFC 2
+    .POWER_BUTTON = 46, // FFC 4
+    .LCD_RESET = 47,    // FFC 6
+    .CLOCK = 52,        // SPI SCK / FFC 9
+    .SERIAL_IN = 51,    // SPI MOSI / FFC 10
+    .LATCH = 48,        // FFC 11
+    .LCD_WRITE = 49,    // FFC 13
 };
 
-Epson_PNL_CE02 controlPanel(EXTENDER_OE, SERIAL_OUT, POWER_BUTTON, LCD_RESET, CLOCK, SERIAL_IN, LATCH, LCD_WRITE);
+Epson_PNL_CE02 controlPanel(&pinout);
+
+const byte OK = static_cast<byte>(ButtonMask::OK);
+const byte HOME = static_cast<byte>(ButtonMask::HOME);
 
 void setup()
 {
@@ -110,7 +114,7 @@ void loop()
         Serial.println("Button OK pressed!");
         break;
     case OK | HOME:
-        Serial.println("Button OK and button LEFT pressed!");
+        Serial.println("Button OK and button HOME pressed!");
         break;
     }
 
@@ -135,24 +139,28 @@ This library is not a GFX library. You can rely on [Adafruit GFX](https://github
 such as the excellent [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library.
 
 Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
-1. Download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
+1. Locate your [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
+   1. [PlatformIO](https://platformio.org/) users: directly edit in `.pio/libdeps/<your_project>/MCUFRIEND_kbv`
+   2. Other users: download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
 2. Edit *MCUFRIEND_kbv/utility/mcufriend_shield.h*:
    1. Uncomment `#define USE_SPECIAL`
-   2. Uncomment `#define SUPPORT_9163`
 3. Edit *MCUFRIEND_kbv/MCUFRIEND_kbv.cpp*:
-   1. Go to `#ifdef SUPPORT_9163` section
-   2. Replace `*p16 = 160;` by `*p16 = 128;`
-5. Edit *MCUFRIEND_kbv/utility/mcufriend_special.h*:
+   1. Uncomment `#define SUPPORT_9163`
+   2. Go to `#ifdef SUPPORT_9163` section
+   3. Replace `*p16 = 160;` by `*p16 = 128;`
+4. Edit *MCUFRIEND_kbv/utility/mcufriend_special.h*:
    1. Write to the top of mcufriend_special.h `#define USE_EPSON_PNL_CE02`
    2. Copy content from *extras/mcufriend_specials/<ARDUINO_TYPE>.h* file
    3. Paste to the SPECIAL definitions of *mcufriend_special.h*, somewhere between `#if` and `#else`
-6. Your code requires:
+5. Your code requires:
    1. Definition for `Epson_PNL_CE02 controlPanel(...)`
    2. Turn display ON before INIT:
       ``` c++
-      controlPanel.extenderWrite(LCD_BACKLIGHT, HIGH);
+      controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, HIGH);
       tft.begin(0x9163);
       ```
+
+`examples/display` and `examples/full` depend on the adaptation above.
 
 [examples/display]([examples/display/display.ino]):
 ``` c++
@@ -161,20 +169,19 @@ Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCU
 #include <Adafruit_GFX.h>
 #include <MCUFRIEND_kbv.h>
 
-enum
-{
+Epson_PNL_CE02_Pinout pinout = {
     /* Control panel to Arduino pinout */
-    EXTENDER_OE = 45,  // FFC 1
-    SERIAL_OUT = 50,   // SPI MISO / FFC 2
-    POWER_BUTTON = 46, // FFC 4
-    LCD_RESET = 47,    // FFC 6
-    CLOCK = 52,        // SPI SCK / FFC 9
-    SERIAL_IN = 51,    // SPI MOSI / FFC 10
-    LATCH = 48,        // FFC 11
-    LCD_WRITE = 49,    // FFC 13
+    .EXTENDER_OE = 45,  // FFC 1
+    .SERIAL_OUT = 50,   // SPI MISO / FFC 2
+    .POWER_BUTTON = 46, // FFC 4
+    .LCD_RESET = 47,    // FFC 6
+    .CLOCK = 52,        // SPI SCK / FFC 9
+    .SERIAL_IN = 51,    // SPI MOSI / FFC 10
+    .LATCH = 48,        // FFC 11
+    .LCD_WRITE = 49,    // FFC 13
 };
 
-Epson_PNL_CE02 controlPanel(EXTENDER_OE, SERIAL_OUT, POWER_BUTTON, LCD_RESET, CLOCK, SERIAL_IN, LATCH, LCD_WRITE);
+Epson_PNL_CE02 controlPanel(&pinout);
 
 MCUFRIEND_kbv tft;
 
@@ -183,10 +190,10 @@ void setup()
     controlPanel.begin();
 
     // STEP 1: Turn display ON
-    controlPanel.extenderWrite(LCD_BACKLIGHT, HIGH);
+    controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, HIGH);
 
     // STEP 2: INIT display
-    tft.begin(0x9163); // ILI9163C
+    tft.begin(0x9163); // Force ILI9163C as the control panel wired the display in write-only mode
 
     // STEP 3: Use display
     tft.fillScreen(TFT_RED);
@@ -204,21 +211,26 @@ void loop()
 
 ## Library documentation
 
+### Epson_PNL_CE02_Pinout Struct
+
+| Member           | Pin | Description                                                            |
+| ---------------- | --- | ---------------------------------------------------------------------- |
+| `EXTENDER_OE`    | #1  | Extender output enable pin. Unused.                                    |
+| `SERIAL_OUT`     | #2  | Serial output pin. Read value for buttons. (SPI MISO)                  |
+| `POWER_BUTTON`   | #4  | Dedicated pin for the power button.                                    |
+| `LCD_RESET`      | #6  | Display reset pin. Refer to ["Using display"](#using-display) section. |
+| `CLOCK`          | #9  | Shared clock pin for extender, buttons and display. (SPI SCK)          |
+| `SERIAL_IN`      | #10 | Serial input pin. Write value in extender. (SPI MOSI)                  |
+| `LATCH`          | #11 | Write extender selector.                                               |
+| `LCD_WRITE`      | #13 | Display write pin. Refer to ["Using display"](#using-display) section. |
 
 ### Epson_PNL_CE02 Class
 
 #### Constructor
 
-| Parameter        | Description                                                   |
-| ---------------- | ------------------------------------------------------------- |
-| `oePin`          | Extender output enable pin. Unused.                           |
-| `serOutPin`      | Serial output pin. Read value for buttons. (SPI MISO)         |
-| `powerButtonPin` | Dedicated pin for the power button.                           |
-| `lcdResetPin`    | Display reset pin.                                            |
-| `clockPin`       | Shared clock pin for extender, buttons and display. (SPI SCK) |
-| `serInPin`       | Serial input pin. Write value in extender. (SPI MOSI)         |
-| `latchPin`       | Write extender selector.                                      |
-| `lcdWritePin`    | Display write pin.                                            |
+| Parameter        | Description                                                            |
+| ---------------- | ---------------------------------------------------------------------- |
+| `pPinout`        | Reference to [`Epson_PNL_CE02_Pinout`](#epson_pnl_ce02_pinout-struct). |
 
 #### Functions
 
@@ -271,3 +283,14 @@ Examples uses:
 
 
 And... EPSON for the control panel 😉
+
+
+## Like this project? :heart:
+
+:star: [Star this project](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/star) to provide better visibility to the community!
+
+:computer: Support this project by purchasing [affiliated hardwares](https://amzn.to/3y5obqz)
+
+:coffee: [Buy me a coffee](paypal.me/XavierBrassoud)
+
+Thank you!

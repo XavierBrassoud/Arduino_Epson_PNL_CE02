@@ -1,0 +1,21 @@
+{
+  "packages": {
+    ".": {
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "simple",
+      "draft": false,
+      "prerelease": false,
+      "extra-files": [
+        "library.properties",
+        {
+            "type": "json",
+            "path": "library.json",
+            "jsonpath": "$.version"
+        },
+        "src/Epson_PNL_CE02.h",
+        "src/Epson_PNL_CE02.cpp"
+      ]
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}
