@@ -28,8 +28,7 @@
                 "src/Epson_PNL_CE02.cpp",
                 "OneButton.cpp"
             ],
-            "dependencies":
-            {
+            "dependencies": {
                 "mathertel/OneButton": "^2.5.0"
             }
         }
