@@ -96,6 +96,9 @@ Epson_PNL_CE02_Pinout pinout = {
 
 Epson_PNL_CE02 controlPanel(&pinout);
 
+const byte OK = static_cast<byte>(ButtonMask::OK);
+const byte HOME = static_cast<byte>(ButtonMask::HOME);
+
 void setup()
 {
     Serial.begin(9600);
@@ -106,10 +109,10 @@ void loop()
 {
     switch (controlPanel.readButtons())
     {
-    case ButtonMask::OK:
+    case OK:
         Serial.println("Button OK pressed!");
         break;
-    case ButtonMask::OK | ButtonMask::HOME:
+    case OK | HOME:
         Serial.println("Button OK and button HOME pressed!");
         break;
     }
@@ -138,15 +141,15 @@ Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCU
 1. Download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
 2. Edit *MCUFRIEND_kbv/utility/mcufriend_shield.h*:
    1. Uncomment `#define USE_SPECIAL`
-   2. Uncomment `#define SUPPORT_9163`
 3. Edit *MCUFRIEND_kbv/MCUFRIEND_kbv.cpp*:
-   1. Go to `#ifdef SUPPORT_9163` section
-   2. Replace `*p16 = 160;` by `*p16 = 128;`
-5. Edit *MCUFRIEND_kbv/utility/mcufriend_special.h*:
+   1. Uncomment `#define SUPPORT_9163`
+   2. Go to `#ifdef SUPPORT_9163` section
+   3. Replace `*p16 = 160;` by `*p16 = 128;`
+4. Edit *MCUFRIEND_kbv/utility/mcufriend_special.h*:
    1. Write to the top of mcufriend_special.h `#define USE_EPSON_PNL_CE02`
    2. Copy content from *extras/mcufriend_specials/<ARDUINO_TYPE>.h* file
    3. Paste to the SPECIAL definitions of *mcufriend_special.h*, somewhere between `#if` and `#else`
-6. Your code requires:
+5. Your code requires:
    1. Definition for `Epson_PNL_CE02 controlPanel(...)`
    2. Turn display ON before INIT:
       ``` c++

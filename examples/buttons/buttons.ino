@@ -50,6 +50,9 @@ Epson_PNL_CE02_Pinout pinout = {
 
 Epson_PNL_CE02 controlPanel(&pinout);
 
+const byte OK = static_cast<byte>(ButtonMask::OK);
+const byte HOME = static_cast<byte>(ButtonMask::HOME);
+
 void setup()
 {
     Serial.begin(BAUD_RATE);
@@ -60,10 +63,10 @@ void loop()
 {
     switch (controlPanel.readButtons())
     {
-    case ButtonMask::OK:
+    case OK:
         Serial.println("Button OK pressed!");
         break;
-    case ButtonMask::OK | ButtonMask::HOME:
+    case OK | HOME:
         Serial.println("Button OK and button HOME pressed!");
         break;
     }

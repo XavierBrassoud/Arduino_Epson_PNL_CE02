@@ -60,9 +60,9 @@ extern Epson_PNL_CE02 controlPanel;
 
 #define VIRTUAL_PORT _MMIO_BYTE(0XFF) // Set Virtual Port for PIN_ methods
 #define CD_PORT VIRTUAL_PORT
-#define CD_PIN LCD_DC // D4 VHC595
+#define CD_PIN static_cast<int>(ExtenderPin::LCD_DC) // D4 VHC595
 #define CS_PORT VIRTUAL_PORT
-#define CS_PIN LCD_CS // D3 VHC595
+#define CS_PIN static_cast<int>(ExtenderPin::LCD_CS) // D3 VHC595
 
 #define UNUSED_PORT _MMIO_BYTE(0XFE) // Disable READ methods as the control panel wired the display in write-only mode
 #define RD_PORT UNUSED_PORT
