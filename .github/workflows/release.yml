@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - ci/fix-publish-platformio
 
 permissions:
   contents: write
@@ -16,6 +17,7 @@ jobs:
     steps:
       # Add packages to update into release-please-config.json
       - name: Write new version to packages
+        id: release
         uses: google-github-actions/release-please-action@v4
         with:
           token: ${{ secrets.MAINTAINER_PAT }}
