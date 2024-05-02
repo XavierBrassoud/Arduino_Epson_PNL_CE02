@@ -20,3 +20,31 @@ jobs:
         with:
           token: ${{ secrets.MAINTAINER_PAT }}
           target-branch: ${{ github.ref_name }}
+
+      # Steps bellow occurs only when a version is created
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Cache pio and pip
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+
+      - uses: actions/setup-python@v4
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          python-version: '3.9'
+
+      - name: Install PlatformIO Core
+        if: ${{ steps.release.outputs.release_created }}
+        run: pip install --upgrade platformio
+      
+      - name: PlatformIO publish
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          PLATFORMIO_AUTH_TOKEN: ${{ secrets.PIO_PAT }}
+        run: pio package publish --type library --no-interactive
