@@ -19,6 +19,7 @@ Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540 prin
   - [ButtonMask](#buttonmask)
   - [ExtenderPin](#extenderpin)
 - [Credits](#credits)
+- [Like this project? :heart:](#like-this-project-heart)
 
 ## Motivation
 
@@ -42,9 +43,9 @@ Happy hacking!
 
 ## Hardware requirements
 
-  * Arduino (tested with Arduino MEGA 2560)
-  * FPC 14 pin 1.0mm adapter (avoid pads destroyed by soldering)
-  * Level shifter (5v to 3.3v)
+  * [Arduino](https://amzn.to/3y5obqz) (tested with Arduino MEGA 2560)
+  * [FPC 14 pin 1.0mm adapter](https://amzn.to/3wiy5EJ) (avoid pads destroyed by soldering)
+  * [Level shifter](https://amzn.to/3Qrx6ZL) (5v to 3.3v)
   * Control panel (PNL CE02) of EPSON XP 520/530/540 printers (obviously)
 
 ## Connecting the control panel
@@ -138,7 +139,9 @@ This library is not a GFX library. You can rely on [Adafruit GFX](https://github
 such as the excellent [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library.
 
 Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
-1. Download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
+1. Locate your [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
+   1. [PlatformIO](https://platformio.org/) users: edit in place on the path `.pio/libdeps/<your_project>/MCUFRIEND_kbv`
+   2. Other users: download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
 2. Edit *MCUFRIEND_kbv/utility/mcufriend_shield.h*:
    1. Uncomment `#define USE_SPECIAL`
 3. Edit *MCUFRIEND_kbv/MCUFRIEND_kbv.cpp*:
@@ -153,9 +156,11 @@ Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCU
    1. Definition for `Epson_PNL_CE02 controlPanel(...)`
    2. Turn display ON before INIT:
       ``` c++
-      controlPanel.extenderWrite(LCD_BACKLIGHT, HIGH);
+      controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, HIGH);
       tft.begin(0x9163);
       ```
+
+`examples/display` and `examples/full` depend on the adaptation above.
 
 [examples/display]([examples/display/display.ino]):
 ``` c++
@@ -278,3 +283,14 @@ Examples uses:
 
 
 And... EPSON for the control panel 😉
+
+
+## Like this project? :heart:
+
+:star: [Star this project](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/) to provide better visibility to the community!
+
+:computer: Support this project by purchasing [affiliated hardwares](https://amzn.to/3y5obqz)
+
+:coffee: [Buy me a coffee](paypal.me/XavierBrassoud)
+
+Thank you!
