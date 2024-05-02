@@ -20,6 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: arduino-lint
+        uses: arduino/arduino-lint-action@v1
+        with:
+          library-manager: submit # TODO: swith to "update" when approved by the Arduino Team
+          compliance: strict
+
       - name: Code format
         uses: jidicula/clang-format-action@v4.11.0
         with:
@@ -43,9 +49,3 @@ jobs:
 
       - name: Code lint
         run: pio check --fail-on-defect=high --fail-on-defect=medium
-
-      - name: arduino-lint
-        uses: arduino/arduino-lint-action@v1
-        with:
-          library-manager: update
-          compliance: strict
