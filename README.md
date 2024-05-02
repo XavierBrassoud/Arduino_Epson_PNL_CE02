@@ -1,6 +1,6 @@
 # Arduino - EPSON XP 520/530/540 Control Panel (PNL CE02) <!-- omit from toc -->
 
-![logo](/docs/panel.jpg)
+![logo](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/raw/v1.0.0/docs/panel.jpg)
 
 Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540 printers from an Arduino.
 
@@ -19,7 +19,7 @@ Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540 prin
   - [ButtonMask](#buttonmask)
   - [ExtenderPin](#extenderpin)
 - [Credits](#credits)
-- [Like this project? :heart:](#like-this-project-heart)
+- [Like this project? ❤️](#like-this-project-️)
 
 ## Motivation
 
@@ -74,7 +74,7 @@ Happy hacking!
 <details>
   <summary>Connecting diagram for Arduino MEGA 2560</summary>
 
-  ![connecting_diagram_mega_2560](/docs/connecting_diagram_mega_2560.png)
+  ![connecting_diagram_mega_2560](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/raw/v1.0.0/docs/connecting_diagram_mega_2560.png)
 </details>
 
 ## Let's play!
@@ -285,12 +285,12 @@ Examples uses:
 And... EPSON for the control panel 😉
 
 
-## Like this project? :heart:
+## Like this project? ❤️
 
-:star: [Star this project](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/star) to provide better visibility to the community!
+⭐ [Star this project](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/star) to provide better visibility to the community!
 
-:computer: Support this project by purchasing [affiliated hardwares](https://amzn.to/3y5obqz)
+💻 Support this project by purchasing [affiliated hardwares](https://amzn.to/3y5obqz)
 
-:coffee: [Buy me a coffee](https://paypal.me/XavierBrassoud)
+☕ [Buy me a coffee](https://paypal.me/XavierBrassoud)
 
 Thank you!
