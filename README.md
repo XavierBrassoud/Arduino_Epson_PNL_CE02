@@ -140,7 +140,7 @@ such as the excellent [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND
 
 Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
 1. Locate your [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
-   1. [PlatformIO](https://platformio.org/) users: edit in place on the path `.pio/libdeps/<your_project>/MCUFRIEND_kbv`
+   1. [PlatformIO](https://platformio.org/) users: directly edit in `.pio/libdeps/<your_project>/MCUFRIEND_kbv`
    2. Other users: download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
 2. Edit *MCUFRIEND_kbv/utility/mcufriend_shield.h*:
    1. Uncomment `#define USE_SPECIAL`
@@ -287,7 +287,7 @@ And... EPSON for the control panel 😉
 
 ## Like this project? :heart:
 
-:star: [Star this project](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/) to provide better visibility to the community!
+:star: [Star this project](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/star) to provide better visibility to the community!
 
 :computer: Support this project by purchasing [affiliated hardwares](https://amzn.to/3y5obqz)
 
