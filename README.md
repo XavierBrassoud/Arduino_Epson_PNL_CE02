@@ -291,6 +291,6 @@ And... EPSON for the control panel 😉
 
 :computer: Support this project by purchasing [affiliated hardwares](https://amzn.to/3y5obqz)
 
-:coffee: [Buy me a coffee](paypal.me/XavierBrassoud)
+:coffee: [Buy me a coffee](https://paypal.me/XavierBrassoud)
 
 Thank you!
