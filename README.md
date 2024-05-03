@@ -35,11 +35,11 @@ Happy hacking!
 
 ## Installation
 
- * **Arduino IDE**: Search for "***Epson_PNL_CE02***" in the built-in Arduino IDE Library manager ([details](https://www.arduino.cc/en/guide/libraries))
+ * **Arduino IDE**: Search for "[***Epson_PNL_CE02***](https://www.arduino.cc/reference/en/libraries/epson_pnl_ce02/)" in the built-in Arduino IDE Library manager ([details](https://www.arduino.cc/en/guide/libraries))
 
- * **PlatformIO**: Add `XavierBassoud/Epson_PNL_CE02` in the `lib_deps` section of your **platformio.ini** file ([details](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#cmd-pkg-install))
+ * **PlatformIO**: Add [**`XavierBassoud/Epson_PNL_CE02`**](https://registry.platformio.org/libraries/xavierbrassoud/Epson_PNL_CE02) in the `lib_deps` section of your **platformio.ini** file ([details](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#cmd-pkg-install))
 
- * Direct download from source: Clone this repository into Arduino/Libraries
+ * Direct download from source: [Clone this repository](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02.git) into Arduino/Libraries
 
 ## Hardware requirements
 
@@ -140,7 +140,7 @@ such as the excellent [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND
 
 Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
 1. Locate your [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
-   1. [PlatformIO](https://platformio.org/) users: directly edit in `.pio/libdeps/<your_project>/MCUFRIEND_kbv`
+   1. [PlatformIO](https://platformio.org/) users: directly edit in `.pio/libdeps/<your_project>/MCUFRIEND_kbv` **[⚠️ Non-persistent]** — or — [`Override package files`](https://docs.platformio.org/en/stable/scripting/examples/override_package_files.html).
    2. Other users: download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
 2. Edit *MCUFRIEND_kbv/utility/mcufriend_shield.h*:
    1. Uncomment `#define USE_SPECIAL`
@@ -251,17 +251,17 @@ void loop()
 
 ### ButtonMask
 
-| Button      | Mask                                  |
-| ----------- | ------------------------------------- |
-| **`HOME`**  | `00000001`                            |
-| **`STOP`**  | `00000010`                            |
-| **`DOWN`**  | `00000100`                            |
-| **`START`** | `00001000`                            |
-| **`LEFT`**  | `00010000`                            |
-| **`UP`**    | `00100000`                            |
-| **`OK`**    | `01000000`                            |
-| **`RIGHT`** | `10000000`                            |
-| ~~`POWER`~~ | The power button has a dedicated pin. |
+| Button      | Mask                                                                                                            |
+| ----------- | --------------------------------------------------------------------------------------------------------------- |
+| **`HOME`**  | `00000001`                                                                                                      |
+| **`STOP`**  | `00000010`                                                                                                      |
+| **`DOWN`**  | `00000100`                                                                                                      |
+| **`START`** | `00001000`                                                                                                      |
+| **`LEFT`**  | `00010000`                                                                                                      |
+| **`UP`**    | `00100000`                                                                                                      |
+| **`OK`**    | `01000000`                                                                                                      |
+| **`RIGHT`** | `10000000`                                                                                                      |
+| ~~`POWER`~~ | The power button has a dedicated pin (refer to [`Epson_PNL_CE02_Pinout Struct`](#epson_pnl_ce02_pinout-struct)) |
 
 ### ExtenderPin
 
