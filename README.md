@@ -37,7 +37,7 @@ Happy hacking!
 
  * **Arduino IDE**: Search for "[***Epson_PNL_CE02***](https://www.arduino.cc/reference/en/libraries/epson_pnl_ce02/)" in the built-in Arduino IDE Library manager ([details](https://www.arduino.cc/en/guide/libraries))
 
- * **PlatformIO**: Add [`XavierBassoud/Epson_PNL_CE02`](https://registry.platformio.org/libraries/xavierbrassoud/Epson_PNL_CE02) in the `lib_deps` section of your **platformio.ini** file ([details](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#cmd-pkg-install))
+ * **PlatformIO**: Add [**`XavierBassoud/Epson_PNL_CE02`**](https://registry.platformio.org/libraries/xavierbrassoud/Epson_PNL_CE02) in the `lib_deps` section of your **platformio.ini** file ([details](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#cmd-pkg-install))
 
  * Direct download from source: [Clone this repository](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02.git) into Arduino/Libraries
 
