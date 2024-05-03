@@ -23,7 +23,7 @@ jobs:
       - name: arduino-lint
         uses: arduino/arduino-lint-action@v1
         with:
-          library-manager: submit # TODO: swith to "update" when approved by the Arduino Team
+          library-manager: update
           compliance: strict
 
       - name: Code format
