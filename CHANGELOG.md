@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/compare/v1.0.0...v1.0.1) (2024-05-03)
+
+
+### Bug Fixes
+
+* **doc:** Improve documentation rendering ([#9](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/issues/9)) ([436c86b](https://github.com/XavierBrassoud/Arduino_Epson_PNL_CE02/commit/436c86b51d6defed8a56dcda69a3b5c6f8eb017d))
+
 ## 1.0.0 (2024-05-02)
 
 
