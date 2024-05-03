@@ -14,4 +14,4 @@ The following are some guidelines to observe when creating issues or PRs:
 
 - Ensure your code are properly formed with `clang-format` and passes quality gates with `pio checks`
 
-- Using [Visual Studio Code](https://code.visualstudio.com/) with the [PlatformIO](https://platformio.org/) [extension](https://platformio.org/install/ide?install=vscode) is highly recommended
+- Using [Visual Studio Code](https://code.visualstudio.com/) with the [PlatformIO](https://platformio.org/) [extension](https://platformio.org/install/ide?install=vscode) is highly recommended. The environment will be automatically configured, select an example environment and PIO will build the project for you.

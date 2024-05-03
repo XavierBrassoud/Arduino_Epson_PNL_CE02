@@ -138,29 +138,38 @@ The control panel embed a GIANTPLUS ILI9163C screen driven by 8-bit parallel int
 This library is not a GFX library. You can rely on [Adafruit GFX](https://github.com/adafruit/Adafruit-GFX-Library) library derivatives,
 such as the excellent [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library.
 
-Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
-1. Locate your [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
-   1. [PlatformIO](https://platformio.org/) users: directly edit in `.pio/libdeps/<your_project>/MCUFRIEND_kbv` **[⚠️ Non-persistent]** — or — [Override package files](https://docs.platformio.org/en/stable/scripting/examples/override_package_files.html).
-   2. Other users: download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
-2. Edit *MCUFRIEND_kbv/utility/mcufriend_shield.h*:
-   1. Uncomment `#define USE_SPECIAL`
-3. Edit *MCUFRIEND_kbv/MCUFRIEND_kbv.cpp*:
-   1. Uncomment `#define SUPPORT_9163`
-   2. Go to `#ifdef SUPPORT_9163` section
-   3. Replace `*p16 = 160;` by `*p16 = 128;`
-4. Edit *MCUFRIEND_kbv/utility/mcufriend_special.h*:
-   1. Write to the top of mcufriend_special.h `#define USE_EPSON_PNL_CE02`
-   2. Copy content from *extras/mcufriend_specials/<ARDUINO_TYPE>.h* file
-   3. Paste to the SPECIAL definitions of *mcufriend_special.h*, somewhere between `#if` and `#else`
-5. Your code requires:
-   1. Definition for `Epson_PNL_CE02 controlPanel(...)`
-   2. Turn display ON before INIT:
-      ``` c++
-      controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, HIGH);
-      tft.begin(0x9163);
-      ```
+Bellow an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library, `examples/display` and `examples/full` are based on.
 
-`examples/display` and `examples/full` depend on the adaptation above.
+* [PlatformIO](https://platformio.org/) users:
+1. Require `patch` tool installed in your system.
+2. Copy `pio-tools/patches.py` and `patches/` folder to the root of your project.
+3. Adding this line to your `platformio.ini`:
+``` ini
+lib_deps =
+    prenticedavid/MCUFRIEND_kbv @ ^3
+    adafruit/Adafruit GFX Library @ ^1
+    adafruit/Adafruit BusIO @ ^1
+    Wire
+    SPI
+extra_scripts = pre:pio-tools/patches.py
+```
+
+* Other users:
+1. Download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
+2. Apply `patch` command with diff files provided in `patches/` folder:
+``` sh
+patch MCUFRIEND_kbv/MCUFRIEND_kbv.cpp patches/MCUFRIEND_kbv/MCUFRIEND_kbv.cpp
+patch MCUFRIEND_kbv/utility/mcufriend_special.h patches/MCUFRIEND_kbv/utility/mcufriend_special.h
+patch MCUFRIEND_kbv/utility/mcufriend_shield.h patches/MCUFRIEND_kbv/utility/mcufriend_shield.h
+```
+
+Nice! Now your code requires this final steps:
+1. Definition for `Epson_PNL_CE02 controlPanel(...)`
+2. Turn display ON before INIT:
+``` c++
+controlPanel.extenderWrite(ExtenderPin::LCD_BACKLIGHT, HIGH);
+tft.begin(0x9163);
+```
 
 [examples/display]([examples/display/display.ino]):
 ``` c++
