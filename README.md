@@ -140,7 +140,7 @@ such as the excellent [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND
 
 Here is an adaptation using [MCUFRIEND_kbv](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
 1. Locate your [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv) library:
-   1. [PlatformIO](https://platformio.org/) users: directly edit in `.pio/libdeps/<your_project>/MCUFRIEND_kbv` **[⚠️ Non-persistent]** — or — [`Override package files`](https://docs.platformio.org/en/stable/scripting/examples/override_package_files.html).
+   1. [PlatformIO](https://platformio.org/) users: directly edit in `.pio/libdeps/<your_project>/MCUFRIEND_kbv` **[⚠️ Non-persistent]** — or — [Override package files](https://docs.platformio.org/en/stable/scripting/examples/override_package_files.html).
    2. Other users: download [MCUFRIEND_kbv v3](https://github.com/prenticedavid/MCUFRIEND_kbv)
 2. Edit *MCUFRIEND_kbv/utility/mcufriend_shield.h*:
    1. Uncomment `#define USE_SPECIAL`
