@@ -32,7 +32,7 @@
  * 🔺 Require a 10k pull-up resistor wired between 3.3V and Arduino pin
  *
  *
- * @version 1.0.0  # x-release-please-version
+ * @version 1.0.1  # x-release-please-version
  *
  * @copyright MIT license
  */

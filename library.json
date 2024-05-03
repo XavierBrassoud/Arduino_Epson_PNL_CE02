@@ -1,6 +1,6 @@
 {
     "name": "Epson_PNL_CE02",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Library to repurposing the control panel (PNL CE02) of EPSON XP 520/530/540 printers from an Arduino.",
     "keywords": "epson, printer, control, panel",
     "repository": {
